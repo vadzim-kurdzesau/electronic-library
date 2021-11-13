@@ -15,6 +15,16 @@ namespace ElectronicLibrary
             this.sqlConnection = new SqlConnection(connectionString);
         }
 
+        ~ElectronicLibraryService()
+        {
+            this.sqlConnection.Close();
+        }
+
+        public void OpenConnection()
+        {
+            this.sqlConnection.Open();
+        }
+
         private static void ValidateConnectionString(string connectionString)
         {
             if (string.IsNullOrWhiteSpace(connectionString))

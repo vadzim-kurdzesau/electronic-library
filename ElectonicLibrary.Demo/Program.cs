@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ElectonicLibrary.Demo
+namespace ElectronicLibrary.Demo
 {
     class Program
     {

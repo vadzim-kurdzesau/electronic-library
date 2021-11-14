@@ -3,21 +3,17 @@ using System.Data.SqlClient;
 
 namespace ElectronicLibrary
 {
-    public class ElectronicLibraryService
+    public class ElectronicLibraryService : IDisposable
     {
         private readonly string connectionString;
         private readonly SqlConnection sqlConnection;
+        private bool disposedValue;
 
         public ElectronicLibraryService(string connectionString)
         {
             ValidateConnectionString(connectionString);
             this.connectionString = connectionString;
             this.sqlConnection = new SqlConnection(connectionString);
-        }
-
-        ~ElectronicLibraryService()
-        {
-            this.sqlConnection.Close();
         }
 
         public void OpenConnection()
@@ -31,6 +27,24 @@ namespace ElectronicLibrary
             {
                 throw new ArgumentNullException(nameof(connectionString), "Connection string can't be null, empty or a whitespace.");
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.sqlConnection.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
         }
     }
 }

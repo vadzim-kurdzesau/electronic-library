@@ -5,19 +5,13 @@ namespace ElectronicLibrary
 {
     public class ElectronicLibraryService : IDisposable
     {
-        private readonly string connectionString;
         private readonly SqlConnection sqlConnection;
         private bool disposedValue;
 
         public ElectronicLibraryService(string connectionString)
         {
             ValidateConnectionString(connectionString);
-            this.connectionString = connectionString;
             this.sqlConnection = new SqlConnection(connectionString);
-        }
-
-        public void OpenConnection()
-        {
             this.sqlConnection.Open();
         }
 

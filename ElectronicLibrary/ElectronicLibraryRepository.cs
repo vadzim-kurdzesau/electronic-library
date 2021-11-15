@@ -3,12 +3,12 @@ using System.Data.SqlClient;
 
 namespace ElectronicLibrary
 {
-    public class ElectronicLibraryService : IDisposable
+    public class ElectronicLibraryRepository : IDisposable
     {
         private readonly SqlConnection sqlConnection;
         private bool disposedValue;
 
-        public ElectronicLibraryService(string connectionString)
+        public ElectronicLibraryRepository(string connectionString)
         {
             ValidateConnectionString(connectionString);
             this.sqlConnection = new SqlConnection(BuildConnectionString(connectionString));

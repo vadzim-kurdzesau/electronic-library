@@ -11,8 +11,19 @@ namespace ElectronicLibrary
         public ElectronicLibraryService(string connectionString)
         {
             ValidateConnectionString(connectionString);
-            this.sqlConnection = new SqlConnection(connectionString);
+            this.sqlConnection = new SqlConnection(BuildConnectionString(connectionString));
             this.sqlConnection.Open();
+        }
+
+        private static string BuildConnectionString(string connectionString)
+        {
+            return new SqlConnectionStringBuilder(connectionString)
+            {
+                ["Integrated Security"] = true,
+                ["Initial Catalog"] = "ElectronicLibrary",
+                ["Connect Timeout"] = 0,
+                ["ApplicationIntent"] = "ReadWrite"
+            }.ConnectionString;
         }
 
         private static void ValidateConnectionString(string connectionString)

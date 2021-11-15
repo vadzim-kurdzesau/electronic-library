@@ -1,21 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 
 namespace ElectronicLibrary
 {
-    public class ElectronicLibraryRepository : IDisposable
+    public class ElectronicLibraryService : IDisposable
     {
         private readonly SqlConnection sqlConnection;
         private bool disposedValue;
 
-        public ElectronicLibraryRepository(string connectionString)
+        public ElectronicLibraryService(string connectionString)
         {
             ValidateConnectionString(connectionString);
             this.sqlConnection = new SqlConnection(BuildConnectionString(connectionString));
+            this.ReaderRepository = new ReaderRepository(sqlConnection);
             this.sqlConnection.Open();
         }
+
+        public ReaderRepository ReaderRepository { get; }
         
         private static string BuildConnectionString(string connectionString)
         {
@@ -31,41 +32,6 @@ namespace ElectronicLibrary
         public void Dispose()
         {
             Dispose(disposing: true);
-        }
-
-        public IEnumerable<SqlDataReader> GetAllReaders()
-        {
-            const string queryString = "SELECT * FROM dbo.readers";
-            return this.GetResponseRows(this.InitializeCommand(queryString));
-        }
-
-        public IEnumerable<SqlDataReader> GetReaderByName(string firstName, string lastName)
-        {
-            const string queryString = "GetReaderByName";
-            return this.GetResponseRows(ProvideNameParameters(command: this.InitializeCommand(queryString), firstName, lastName));
-        }
-
-        private IEnumerable<SqlDataReader> GetResponseRows(SqlCommand command)
-        {
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                yield return reader;
-            }
-        }
-
-        private SqlCommand InitializeCommand(string queryString)
-        {
-            return new SqlCommand(queryString, this.sqlConnection);
-        }
-
-        private static SqlCommand ProvideNameParameters(SqlCommand command, string firstName, string lastName)
-        {
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@FirstName", firstName);
-            command.Parameters.AddWithValue("@LastName", lastName);
-
-            return command;
         }
 
         protected virtual void Dispose(bool disposing)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace ElectronicLibrary
@@ -14,7 +16,7 @@ namespace ElectronicLibrary
             this.sqlConnection = new SqlConnection(BuildConnectionString(connectionString));
             this.sqlConnection.Open();
         }
-
+        
         private static string BuildConnectionString(string connectionString)
         {
             return new SqlConnectionStringBuilder(connectionString)
@@ -26,12 +28,44 @@ namespace ElectronicLibrary
             }.ConnectionString;
         }
 
-        private static void ValidateConnectionString(string connectionString)
+        public void Dispose()
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
+            Dispose(disposing: true);
+        }
+
+        public IEnumerable<SqlDataReader> GetAllReaders()
+        {
+            const string queryString = "SELECT * FROM dbo.readers";
+            return this.GetResponseRows(this.InitializeCommand(queryString));
+        }
+
+        public IEnumerable<SqlDataReader> GetReaderByName(string firstName, string lastName)
+        {
+            const string queryString = "GetReaderByName";
+            return this.GetResponseRows(ProvideNameParameters(command: this.InitializeCommand(queryString), firstName, lastName));
+        }
+
+        private IEnumerable<SqlDataReader> GetResponseRows(SqlCommand command)
+        {
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                throw new ArgumentNullException(nameof(connectionString), "Connection string can't be null, empty or a whitespace.");
+                yield return reader;
             }
+        }
+
+        private SqlCommand InitializeCommand(string queryString)
+        {
+            return new SqlCommand(queryString, this.sqlConnection);
+        }
+
+        private static SqlCommand ProvideNameParameters(SqlCommand command, string firstName, string lastName)
+        {
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@FirstName", firstName);
+            command.Parameters.AddWithValue("@LastName", lastName);
+
+            return command;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -47,9 +81,12 @@ namespace ElectronicLibrary
             }
         }
 
-        public void Dispose()
+        private static void ValidateConnectionString(string connectionString)
         {
-            Dispose(disposing: true);
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ArgumentNullException(nameof(connectionString), "Connection string can't be null, empty or a whitespace.");
+            }
         }
     }
 }

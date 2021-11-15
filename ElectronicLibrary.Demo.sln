@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicLibrary", "Electr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicLibrary.Tests", "ElectronicLibrary.Tests\ElectronicLibrary.Tests.csproj", "{F96EB2C7-79D5-4E04-A8C6-27DE0DA5EB6A}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ElectronicLibraryData", "ElectronicLibraryBD\ElectronicLibraryData.sqlproj", "{5A25E385-9767-4EA1-821D-569968175CFF}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ElectronicLibrary.Data", "ElectronicLibrary.Data\ElectronicLibrary.Data.sqlproj", "{5A25E385-9767-4EA1-821D-569968175CFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

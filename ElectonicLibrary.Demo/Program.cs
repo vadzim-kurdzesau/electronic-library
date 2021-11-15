@@ -2,11 +2,12 @@
 
 namespace ElectronicLibrary.Demo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ConfigurationManager configurationManager = new ConfigurationManager();
+            var service = new ElectronicLibraryService(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
         }
     }
 }

@@ -7,11 +7,11 @@ using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary
 {
-    public class ReaderRepository
+    public class ReadersRepository
     {
         private readonly SqlConnection sqlConnection;
 
-        internal ReaderRepository(SqlConnection sqlConnection)
+        internal ReadersRepository(SqlConnection sqlConnection)
             => this.sqlConnection = sqlConnection 
                                         ?? throw new ArgumentNullException(nameof(sqlConnection), "SqlConnection is null.");
 

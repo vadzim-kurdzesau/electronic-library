@@ -12,11 +12,14 @@ namespace ElectronicLibrary
         {
             ValidateConnectionString(connectionString);
             this.sqlConnection = new SqlConnection(BuildConnectionString(connectionString));
-            this.ReaderRepository = new ReaderRepository(sqlConnection);
+            this.ReaderRepository = new ReadersRepository(this.sqlConnection);
+            this.BooksRepository = new BooksRepository(this.sqlConnection);
             this.sqlConnection.Open();
         }
 
-        public ReaderRepository ReaderRepository { get; }
+        public ReadersRepository ReaderRepository { get; }
+
+        public BooksRepository BooksRepository { get; }
         
         private static string BuildConnectionString(string connectionString)
         {

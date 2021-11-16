@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ElectronicLibrary.Demo
+﻿namespace ElectronicLibrary.Demo
 {
     internal class Program
     {

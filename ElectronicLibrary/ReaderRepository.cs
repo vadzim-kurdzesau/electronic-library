@@ -21,10 +21,38 @@ namespace ElectronicLibrary
             return GetReaders(this.InitializeCommand(queryString));
         }
 
-        public Reader FindReader(int id)
+        public Reader GetReader(int id)
         {
             const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id WHERE @Id = dbo.readers.id;";
             return GetReaders(AddParameter("@Id", id, this.InitializeCommand(queryString))).FirstOrDefault();
+        }
+
+        public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
+        {
+            const string queryString =
+                "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id " +
+                "WHERE @FirstName = dbo.readers.first_name AND @LastName = dbo.readers.last_name";
+
+            return GetReaders(AddParameter("@FirstName", firstName,
+                AddParameter("@LastName", lastName, InitializeCommand(queryString))));
+        }
+
+        public Reader FindReaderByPhone(string phone)
+        {
+            const string queryString =
+                "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id " +
+                "WHERE @Phone = dbo.readers.phone";
+
+            return GetReaders(AddParameter("@Phone", phone, InitializeCommand(queryString))).FirstOrDefault();
+        }
+
+        public Reader FindReaderByEmail(string email)
+        {
+            const string queryString =
+                "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id " +
+                "WHERE @Email = dbo.readers.email";
+
+            return GetReaders(AddParameter("@Email", email, InitializeCommand(queryString))).FirstOrDefault();
         }
 
         public void InsertReader(Reader reader)
@@ -39,7 +67,7 @@ namespace ElectronicLibrary
         {
             const string queryString = "UPDATE dbo.readers SET dbo.readers.first_name = @FirstName," +
                                             " dbo.readers.last_name = @LastName, dbo.readers.email = @Email, dbo.readers.phone = @Phone," +
-                                                " dbo.readers.city_id = (SELECT city FROM dbo.cities WHERE dbo.cities.id = @CityId)," +
+                                                " dbo.readers.city_id = (SELECT id FROM dbo.cities WHERE dbo.cities.city = @City)," +
                                                     " dbo.readers.address = @Address, dbo.readers.zip = @Zip;";
 
             ProvideWithReaderParameters(AddParameter("@Id", id, this.InitializeCommand(queryString)), reader)

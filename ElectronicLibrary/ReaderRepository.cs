@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using System.Data;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary
@@ -28,8 +29,10 @@ namespace ElectronicLibrary
 
         public void InsertReader(Reader reader)
         {
-            const string queryString = "I_InsertReader";
-            ProvideWithReaderParameters(this.InitializeCommand(queryString), reader).ExecuteNonQuery();
+            const string queryString = "I_AddReader";
+            var command = ProvideWithReaderParameters(this.InitializeCommand(queryString), reader);
+            command.CommandType = CommandType.StoredProcedure;
+            command.ExecuteNonQuery();
         }
 
         public void UpdateReader(int id, Reader reader)
@@ -43,7 +46,7 @@ namespace ElectronicLibrary
                 .ExecuteNonQuery();
         }
 
-        private void DeleteReader(int id)
+        public void DeleteReader(int id)
         {
             const string queryString = "DELETE dbo.readers WHERE @Id = dbo.readers.id;";
             AddParameter("@Id", id, this.InitializeCommand(queryString)).ExecuteNonQuery();

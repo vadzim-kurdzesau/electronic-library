@@ -16,13 +16,13 @@ namespace ElectronicLibrary
 
         public IEnumerable<Reader> GetAllReaders()
         {
-            const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id";
+            const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id;";
             return GetReaders(this.InitializeCommand(queryString));
         }
 
         public Reader FindReader(int id)
         {
-            const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id WHERE @Id = dbo.readers.id";
+            const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id WHERE @Id = dbo.readers.id;";
             return GetReaders(AddParameter("@Id", id, this.InitializeCommand(queryString))).FirstOrDefault();
         }
 
@@ -30,6 +30,23 @@ namespace ElectronicLibrary
         {
             const string queryString = "I_InsertReader";
             ProvideWithReaderParameters(this.InitializeCommand(queryString), reader).ExecuteNonQuery();
+        }
+
+        public void UpdateReader(int id, Reader reader)
+        {
+            const string queryString = "UPDATE dbo.readers SET dbo.readers.first_name = @FirstName," +
+                                            " dbo.readers.last_name = @LastName, dbo.readers.email = @Email, dbo.readers.phone = @Phone," +
+                                                " dbo.readers.city_id = (SELECT city FROM dbo.cities WHERE dbo.cities.id = @CityId)," +
+                                                    " dbo.readers.address = @Address, dbo.readers.zip = @Zip;";
+
+            ProvideWithReaderParameters(AddParameter("@Id", id, this.InitializeCommand(queryString)), reader)
+                .ExecuteNonQuery();
+        }
+
+        private void DeleteReader(int id)
+        {
+            const string queryString = "DELETE dbo.readers WHERE @Id = dbo.readers.id;";
+            AddParameter("@Id", id, this.InitializeCommand(queryString)).ExecuteNonQuery();
         }
 
         private static IEnumerable<Reader> GetReaders(SqlCommand command)

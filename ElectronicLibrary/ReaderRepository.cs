@@ -17,16 +17,22 @@ namespace ElectronicLibrary
         public IEnumerable<Reader> GetAllReaders()
         {
             const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id";
-            return this.GetReaders(this.InitializeCommand(queryString));
+            return GetReaders(this.InitializeCommand(queryString));
         }
 
         public Reader FindReader(int id)
         {
             const string queryString = "SELECT * FROM dbo.readers JOIN dbo.cities ON dbo.readers.city_id = dbo.cities.id WHERE @Id = dbo.readers.id";
-            return this.GetReaders(AddParameter(this.InitializeCommand(queryString), "@Id", id)).FirstOrDefault();
+            return GetReaders(AddParameter("@Id", id, this.InitializeCommand(queryString))).FirstOrDefault();
         }
 
-        private IEnumerable<Reader> GetReaders(SqlCommand command)
+        public void InsertReader(Reader reader)
+        {
+            const string queryString = "I_InsertReader";
+            ProvideWithReaderParameters(this.InitializeCommand(queryString), reader).ExecuteNonQuery();
+        }
+
+        private static IEnumerable<Reader> GetReaders(SqlCommand command)
         {
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -35,7 +41,20 @@ namespace ElectronicLibrary
             }
         }
 
-        private SqlCommand AddParameter(SqlCommand sqlCommand, string parameterName, object value)
+        private static SqlCommand ProvideWithReaderParameters(SqlCommand command, Reader reader)
+        {
+            AddParameter("@Zip", reader.Zip,
+                AddParameter("@Address", reader.Address,
+                    AddParameter("@City", reader.City,
+                        AddParameter("@Phone", reader.Phone,
+                            AddParameter("@Email", reader.Email,
+                                AddParameter("@LastName", reader.LastName,
+                                    AddParameter("@FirstName", reader.FirstName, command)))))));
+
+            return command;
+        }
+
+        private static SqlCommand AddParameter(string parameterName, object value, SqlCommand sqlCommand)
         {
             sqlCommand.Parameters.AddWithValue(parameterName, value);
             return sqlCommand;

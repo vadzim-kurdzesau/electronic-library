@@ -28,6 +28,22 @@ namespace ElectronicLibrary.Extensions
                 Zip = reader["zip"] as string
             };
 
+        internal static IEnumerable<City> GetCities(this SqlCommand command)
+        {
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                yield return CreateCityObject(reader);
+            }
+        }
+
+        internal static City CreateCityObject(this SqlDataReader reader)
+            => new City()
+            {
+                Id = (int) reader["id"],
+                Name = reader["name"] as string
+            };
+
         internal static SqlCommand AddParameter(this SqlCommand sqlCommand, string parameterName, object value)
         {
             sqlCommand.Parameters.AddWithValue(parameterName, value);

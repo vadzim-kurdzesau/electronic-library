@@ -71,4 +71,7 @@
     <Build Include="dbo\Stored Procedures\I_InsertReader.sql" />
     <Build Include="dbo\Stored Procedures\GetReaderByName.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />
+  </ItemGroup>
 </Project>

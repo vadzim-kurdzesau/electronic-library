@@ -13,7 +13,33 @@ namespace ElectronicLibrary
         private readonly SqlConnection sqlConnection;
 
         internal ReadersRepository(SqlConnection sqlConnection)
-            => this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection), "SqlConnection is null.");
+        {
+            this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection), "SqlConnection is null.");
+            this.Cities = new City[this.GetNumberOfCities()];
+            this.FillCitiesArray();
+        }
+
+        private void FillCitiesArray()
+        {
+            const string queryString = "SELECT * FROM dbo.cities;";
+            int index = 0;
+            foreach (var city in this.InitializeCommand(queryString).GetCities())
+            {
+                this.Cities[index] = city;
+                index++;
+            }
+        }
+
+        private int GetNumberOfCities()
+        {
+            const string queryString = "SELECT COUNT(*) FROM dbo.cities;";
+            using var reader = this.InitializeCommand(queryString).ExecuteReader();
+            reader.Read();
+
+            return (int)reader[0];
+        }
+
+        public City[] Cities { get; private set; }
 
         public IEnumerable<Reader> GetAllReaders()
         {

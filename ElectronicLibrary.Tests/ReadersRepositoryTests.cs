@@ -68,6 +68,13 @@ namespace ElectronicLibrary.Tests
         }
 
         [Order(0)]
+        [Test]
+        public void ReaderRepositoryTests_FillCities()
+        {
+            Assert.AreEqual(6, library.ReaderRepository.Cities.Length);
+        }
+
+        [Order(0)]
         [TestCaseSource(nameof(Readers))]
         public void ReaderRepositoryTests_InsertReader(Reader reader)
         {

@@ -13,8 +13,7 @@ namespace ElectronicLibrary
         private readonly SqlConnection sqlConnection;
 
         internal ReadersRepository(SqlConnection sqlConnection)
-            => this.sqlConnection = sqlConnection 
-                                        ?? throw new ArgumentNullException(nameof(sqlConnection), "SqlConnection is null.");
+            => this.sqlConnection = sqlConnection ?? throw new ArgumentNullException(nameof(sqlConnection), "SqlConnection is null.");
 
         public IEnumerable<Reader> GetAllReaders()
         {
@@ -61,7 +60,7 @@ namespace ElectronicLibrary
 
         public void InsertReader(Reader reader)
         {
-            const string queryString = "I_AddReader";
+            const string queryString = "I_InsertReader";
             var command = this.InitializeCommand(queryString).ProvideWithReaderParameters(reader);
             command.CommandType = CommandType.StoredProcedure;
             command.ExecuteNonQuery();
@@ -81,14 +80,16 @@ namespace ElectronicLibrary
                                           WHERE 
                                                 dbo.readers.id = @Id;";
 
-            this.InitializeCommand(queryString).ProvideWithReaderParameters(reader)
-                .ExecuteNonQuery();
+                this.InitializeCommand(queryString)
+                    .ProvideWithReaderParameters(reader).AddParameter("@Id", reader.Id)
+                        .ExecuteNonQuery();
         }
 
         public void DeleteReader(int id)
         {
             const string queryString = @"DELETE dbo.readers
                                           WHERE dbo.readers.id = @Id;";
+
             this.InitializeCommand(queryString).AddParameter("@Id", id).ExecuteNonQuery();
         }
 

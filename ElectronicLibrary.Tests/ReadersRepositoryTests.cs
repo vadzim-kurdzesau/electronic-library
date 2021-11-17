@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace ElectronicLibrary.Tests
 {
     [TestFixture]
-    public class ReaderRepositoryTests
+    public class ReadersRepositoryTests
     {
         private readonly ElectronicLibraryRepository library;
 
@@ -18,6 +18,7 @@ namespace ElectronicLibrary.Tests
             {
                 yield return new TestCaseData(new Reader()
                 {
+                    Id = 1,
                     FirstName = "Vadzim",
                     LastName = "Kurdzesau",
                     Email = "VadzimKurdzesau@mail.com",
@@ -51,7 +52,7 @@ namespace ElectronicLibrary.Tests
             }
         }
 
-        public ReaderRepositoryTests()
+        public ReadersRepositoryTests()
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
             ReseedReadersIdentifiers(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
@@ -127,18 +128,18 @@ namespace ElectronicLibrary.Tests
             }
         }
 
-        //[Order(3)]
-        //[Test]
-        //public void ReaderRepositoryTests_UpdateReader()
-        //{
-        //    var expected = Readers.First().Arguments[0] as Reader;
-        //    expected.FirstName = "Vadim";
+        [Order(3)]
+        [Test]
+        public void ReaderRepositoryTests_UpdateReader()
+        {
+            var expected = Readers.First().Arguments[0] as Reader;
+            expected.FirstName = "Vadim";
 
-        //    this.library.ReaderRepository.UpdateReader(expected);
-        //    Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(1));
-        //}
+            this.library.ReaderRepository.UpdateReader(expected);
+            Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(expected.Id).FirstName);
+        }
 
-        [Order(5)]
+        [Order(4)]
         [Test]
         public void ReaderRepositoryTests_DeleteReaders()
         {

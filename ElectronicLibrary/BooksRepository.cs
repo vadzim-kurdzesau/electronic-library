@@ -22,6 +22,9 @@ namespace ElectronicLibrary
             booksAdapter.Fill(this.booksDataSet, "Books");
             bookNumbersAdapter.Fill(this.booksDataSet, "BookNumbers");
 
+            this.booksDataSet.Tables["Books"].PrimaryKey = new DataColumn[1]
+                {this.booksDataSet.Tables["Books"].Columns["id"]};
+
             this.booksDataSet.Relations.Add("Books_To_BookNumbers", 
                 this.booksDataSet.Tables["BookNumbers"].Columns["book_id"],
                     this.booksDataSet.Tables["Books"].Columns["id"], false);
@@ -38,6 +41,12 @@ namespace ElectronicLibrary
         public void InsertBook(Book book) 
             => AddBookRow(this.booksDataSet.Tables["Books"], book);
 
+        public void DeleteBook(int id)
+        {
+            var row = this.booksDataSet.Tables["Books"].Rows.Find(id);
+            row.Delete();
+        }
+
         private static void AddBookRow(DataTable table, Book book)
         {
             DataRow row = table.NewRow();
@@ -53,18 +62,21 @@ namespace ElectronicLibrary
             var changes = this.booksDataSet.GetChanges();
             SqlDataAdapter adapter = new SqlDataAdapter()
             {
-                InsertCommand = new SqlCommand("INSERT dbo.books VALUES (@Name, @Author, @PublicationDate)", connection)
+                InsertCommand = new SqlCommand("INSERT dbo.books VALUES (@Name, @Author, @PublicationDate)", connection),
+                DeleteCommand = new SqlCommand("DELETE dbo.books WHERE dbo.books.id = @Id", connection)
             };
 
-            ProvideAdapterWithParameters(adapter).Update(changes, "Books");
+            adapter.DeleteCommand.Parameters.Add("@Id", SqlDbType.Int, int.MaxValue, "id");
+
+            ProvideAdapterWithInsertParameters(adapter).Update(changes, "Books");
         }
 
-        private static SqlDataAdapter ProvideAdapterWithParameters(SqlDataAdapter adapter)
-            => AddParameter("@Name", SqlDbType.NVarChar, 200, "name",
-                AddParameter("@Author", SqlDbType.NVarChar, 100, "author",
-                    AddParameter("@PublicationDate", SqlDbType.Date, int.MaxValue, "publication_date", adapter)));
+        private static SqlDataAdapter ProvideAdapterWithInsertParameters(SqlDataAdapter adapter)
+            => AddInsertParameter("@Name", SqlDbType.NVarChar, 200, "name",
+                AddInsertParameter("@Author", SqlDbType.NVarChar, 100, "author",
+                    AddInsertParameter("@PublicationDate", SqlDbType.Date, int.MaxValue, "publication_date", adapter)));
 
-        private static SqlDataAdapter AddParameter(string parameterName, SqlDbType type, int size, string sourceColumn, SqlDataAdapter adapter)
+        private static SqlDataAdapter AddInsertParameter(string parameterName, SqlDbType type, int size, string sourceColumn, SqlDataAdapter adapter)
         {
             adapter.InsertCommand.Parameters.Add(parameterName, type, size, sourceColumn);
             return adapter;

@@ -54,8 +54,8 @@ namespace ElectronicLibrary.Tests
         public ReaderRepositoryTests()
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
-            ReseedReadersIdentifiers(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
-            this.library = new ElectronicLibraryRepository(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
+            ReseedReadersIdentifiers(configurationManager.ConnectionString);
+            this.library = new ElectronicLibraryRepository(configurationManager.ConnectionString);
         }
 
         private static void ReseedReadersIdentifiers(string connectionString)

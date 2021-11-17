@@ -10,6 +10,8 @@ namespace ElectronicLibrary.Tests
     [TestFixture]
     public class ReadersRepositoryTests
     {
+        // TODO: implement Reader comparator
+
         private readonly ElectronicLibraryRepository library;
 
         public static IEnumerable<TestCaseData> Readers

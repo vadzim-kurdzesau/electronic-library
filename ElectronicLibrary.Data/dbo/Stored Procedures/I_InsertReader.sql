@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE I_AddReader
+﻿CREATE PROCEDURE [I_InsertReader]
 		@FirstName	AS NVARCHAR(20),
 		@LastName	AS NVARCHAR(20),
 		@Email		AS NVARCHAR(320),

@@ -35,6 +35,41 @@ namespace ElectronicLibrary
             }
         }
 
+        public void InsertBook(Book book) 
+            => AddBookRow(this.booksDataSet.Tables["Books"], book);
+
+        private static void AddBookRow(DataTable table, Book book)
+        {
+            DataRow row = table.NewRow();
+            row["name"] = book.Name;
+            row["author"] = book.Author;
+            row["publication_date"] = book.PublicationDate;
+
+            table.Rows.Add(row);
+        }
+
+        internal void SaveChanges(SqlConnection connection)
+        {
+            var changes = this.booksDataSet.GetChanges();
+            SqlDataAdapter adapter = new SqlDataAdapter()
+            {
+                InsertCommand = new SqlCommand("INSERT dbo.books VALUES (@Name, @Author, @PublicationDate)", connection)
+            };
+
+            ProvideAdapterWithParameters(adapter).Update(changes, "Books");
+        }
+
+        private static SqlDataAdapter ProvideAdapterWithParameters(SqlDataAdapter adapter)
+            => AddParameter("@Name", SqlDbType.NVarChar, 200, "name",
+                AddParameter("@Author", SqlDbType.NVarChar, 100, "author",
+                    AddParameter("@PublicationDate", SqlDbType.Date, int.MaxValue, "publication_date", adapter)));
+
+        private static SqlDataAdapter AddParameter(string parameterName, SqlDbType type, int size, string sourceColumn, SqlDataAdapter adapter)
+        {
+            adapter.InsertCommand.Parameters.Add(parameterName, type, size, sourceColumn);
+            return adapter;
+        }
+
         private static Book CreateBookObject(DataRow dataRow)
             => new Book()
             {

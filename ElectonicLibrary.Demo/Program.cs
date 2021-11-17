@@ -1,11 +1,14 @@
-﻿namespace ElectronicLibrary.Demo
+﻿using System;
+using ElectronicLibrary.Models;
+
+namespace ElectronicLibrary.Demo
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
-            var service = new ElectronicLibraryRepository(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
+            using var service = new ElectronicLibraryRepository(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
         }
     }
 }

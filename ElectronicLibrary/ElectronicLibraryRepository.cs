@@ -34,6 +34,7 @@ namespace ElectronicLibrary
 
         public void Dispose()
         {
+            this.BooksRepository.SaveChanges(this.sqlConnection);
             Dispose(disposing: true);
         }
 

@@ -68,7 +68,10 @@ namespace ElectronicLibrary
 
             adapter.DeleteCommand.Parameters.Add("@Id", SqlDbType.Int, int.MaxValue, "id");
 
-            ProvideAdapterWithInsertParameters(adapter).Update(changes, "Books");
+            if (changes != null)
+            {
+                ProvideAdapterWithInsertParameters(adapter).Update(changes, "Books");
+            }
         }
 
         private static SqlDataAdapter ProvideAdapterWithInsertParameters(SqlDataAdapter adapter)

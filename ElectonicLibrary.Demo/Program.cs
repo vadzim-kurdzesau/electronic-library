@@ -8,7 +8,7 @@ namespace ElectronicLibrary.Demo
         private static void Main(string[] args)
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
-            using var service = new ElectronicLibraryRepository(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
+            using var service = new ElectronicLibraryRepository(configurationManager.ConnectionString);
         }
     }
 }

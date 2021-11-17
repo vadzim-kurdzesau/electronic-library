@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace ElectronicLibrary.Tests
 {
     [TestFixture]
-    public class ReaderRepositoryTests
+    public class ReadersRepositoryTests
     {
         private readonly ElectronicLibraryRepository library;
 
@@ -18,11 +18,12 @@ namespace ElectronicLibrary.Tests
             {
                 yield return new TestCaseData(new Reader()
                 {
+                    Id = 1,
                     FirstName = "Vadzim",
                     LastName = "Kurdzesau",
                     Email = "VadzimKurdzesau@mail.com",
                     Phone = "+375112223344",
-                    City = "Minsk",
+                    CityId = 1,
                     Address = "Middle st.",
                     Zip = "111222"
                 });
@@ -33,7 +34,7 @@ namespace ElectronicLibrary.Tests
                     LastName = "Andreev",
                     Email = "NickolayAndreev@mail.com",
                     Phone = "+375112233445",
-                    City = "Minsk",
+                    CityId = 1,
                     Address = "Right st.",
                     Zip = "111223"
                 });
@@ -44,14 +45,14 @@ namespace ElectronicLibrary.Tests
                     LastName = "Egorov",
                     Email = "ZedaphEgorov@mail.com",
                     Phone = "+375122334449",
-                    City = "Gomel",
+                    CityId = 2,
                     Address = "Left st.",
                     Zip = "121321"
                 });
             }
         }
 
-        public ReaderRepositoryTests()
+        public ReadersRepositoryTests()
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
             ReseedReadersIdentifiers(configurationManager.ConnectionString);
@@ -127,18 +128,18 @@ namespace ElectronicLibrary.Tests
             }
         }
 
-        //[Order(3)]
-        //[Test]
-        //public void ReaderRepositoryTests_UpdateReader()
-        //{
-        //    var expected = Readers.First().Arguments[0] as Reader;
-        //    expected.FirstName = "Vadim";
+        [Order(3)]
+        [Test]
+        public void ReaderRepositoryTests_UpdateReader()
+        {
+            var expected = Readers.First().Arguments[0] as Reader;
+            expected.FirstName = "Vadim";
 
-        //    this.library.ReaderRepository.UpdateReader(1, expected);
-        //    Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(1));
-        //}
+            this.library.ReaderRepository.UpdateReader(expected);
+            Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(expected.Id).FirstName);
+        }
 
-        [Order(5)]
+        [Order(4)]
         [Test]
         public void ReaderRepositoryTests_DeleteReaders()
         {

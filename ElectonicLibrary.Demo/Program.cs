@@ -1,4 +1,5 @@
 ﻿using System;
+using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Demo
 {
@@ -7,7 +8,7 @@ namespace ElectronicLibrary.Demo
         private static void Main(string[] args)
         {
             ConfigurationManager configurationManager = new ConfigurationManager();
-            var service = new ElectronicLibraryRepository(configurationManager.ConnectionString);
+            using var service = new ElectronicLibraryRepository(configurationManager.Configuration["ConnectionStrings:LibraryConnectionString"]);
         }
     }
 }

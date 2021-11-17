@@ -22,7 +22,7 @@ namespace ElectronicLibrary.Tests
                     LastName = "Kurdzesau",
                     Email = "VadzimKurdzesau@mail.com",
                     Phone = "+375112223344",
-                    City = "Minsk",
+                    CityId = 1,
                     Address = "Middle st.",
                     Zip = "111222"
                 });
@@ -33,7 +33,7 @@ namespace ElectronicLibrary.Tests
                     LastName = "Andreev",
                     Email = "NickolayAndreev@mail.com",
                     Phone = "+375112233445",
-                    City = "Minsk",
+                    CityId = 1,
                     Address = "Right st.",
                     Zip = "111223"
                 });
@@ -44,7 +44,7 @@ namespace ElectronicLibrary.Tests
                     LastName = "Egorov",
                     Email = "ZedaphEgorov@mail.com",
                     Phone = "+375122334449",
-                    City = "Gomel",
+                    CityId = 2,
                     Address = "Left st.",
                     Zip = "121321"
                 });
@@ -134,7 +134,7 @@ namespace ElectronicLibrary.Tests
         //    var expected = Readers.First().Arguments[0] as Reader;
         //    expected.FirstName = "Vadim";
 
-        //    this.library.ReaderRepository.UpdateReader(1, expected);
+        //    this.library.ReaderRepository.UpdateReader(expected);
         //    Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(1));
         //}
 

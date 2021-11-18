@@ -2,7 +2,7 @@
 {
     public class Reader
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         public string FirstName { get; set; }
 

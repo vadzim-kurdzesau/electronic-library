@@ -93,7 +93,7 @@ namespace ElectronicLibrary
 
         public IEnumerable<InventoryNumber> GetInventoryNumbers(int id)
         {
-            var rows = this.booksTable.Rows[id].GetParentRows("Books_To_InventoryNumbers");
+            var rows = this.booksTable.Rows[id - 1].GetParentRows("Books_To_InventoryNumbers");
             foreach (var row in rows)
             {
                 yield return row.CreateInventoryNumber();

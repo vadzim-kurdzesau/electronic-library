@@ -1,14 +1,34 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using ElectronicLibrary.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace ElectronicLibrary.Demo
 {
     internal class Program
     {
+        private static IConfigurationRoot _config;
+
         private static void Main(string[] args)
         {
-            ConfigurationManager configurationManager = new ConfigurationManager();
-            using var service = new ElectronicLibraryRepository(configurationManager.ConnectionString);
+            var connectionString = GetConfig().GetSection("connectionStrings")["mainDB"];
+
+            using var service = new ElectronicLibraryService(connectionString);
+            var readerRepositoryCities = service.ReaderRepository.Cities;
+            Console.WriteLine(string.Join(", ", readerRepositoryCities.Select(c => c.Name).ToList()));
+        }
+
+        private static IConfigurationRoot GetConfig()
+        {
+            if (_config == null)
+            {
+                var builder = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json");
+                _config = builder.Build();
+            } 
+            return _config;
         }
     }
 }

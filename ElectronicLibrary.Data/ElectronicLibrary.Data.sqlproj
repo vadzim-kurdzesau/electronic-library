@@ -61,6 +61,7 @@
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="post_deploy" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\cities.sql" />
@@ -68,10 +69,16 @@
     <Build Include="dbo\Tables\books.sql" />
     <Build Include="dbo\Tables\inventory_numbers.sql" />
     <Build Include="dbo\Tables\borrow_history.sql" />
-    <Build Include="dbo\Stored Procedures\GetReaderByName.sql" />
-    <Build Include="dbo\Stored Procedures\I_InsertReader.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_by_name.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_insert.sql" />
+    <PostDeploy Include="post_deploy\cities_insert.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </PostDeploy>
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ElectronicLibrary.SGusev.publish.xml" />
   </ItemGroup>
 </Project>

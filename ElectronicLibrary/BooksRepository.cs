@@ -7,7 +7,7 @@ using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary
 {
-    public class BooksRepository
+    public class BooksRepository 
     {
         private readonly DataSet booksDataSet;
         private readonly DataTable booksTable;
@@ -15,9 +15,10 @@ namespace ElectronicLibrary
 
         internal BooksRepository(SqlConnection sqlConnection)
         {
-            // TODO: refactor constructor
+            // TODO: refactor constructor (definitely)
 
-            const string selectBooksQuery = "SELECT * FROM dbo.books;", selectBookNumberQuery = "SELECT * FROM dbo.inventory_numbers;";
+            const string selectBooksQuery = "SELECT * FROM dbo.books;";
+            const string selectBookNumberQuery = "SELECT * FROM dbo.inventory_numbers;";
 
             this.booksDataSet = new DataSet();
 

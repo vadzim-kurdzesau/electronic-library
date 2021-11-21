@@ -3,6 +3,7 @@
     [name]             NVARCHAR (200) NOT NULL,
     [author]           NVARCHAR (100) NOT NULL,
     [publication_date] DATE           NOT NULL,
-    PRIMARY KEY CLUSTERED ([id] ASC)
+
+    CONSTRAINT [pk_books_id] PRIMARY KEY  CLUSTERED ([id] ASC),
 );
 

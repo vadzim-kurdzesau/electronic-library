@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using ElectronicLibrary.Demo;
 using ElectronicLibrary.Models;
+using ElectronicLibrary.Tests.TestData;
 using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests
@@ -12,53 +12,12 @@ namespace ElectronicLibrary.Tests
     {
         // TODO: implement Reader comparator
 
-        private readonly ElectronicLibraryRepository library;
-
-        public static IEnumerable<TestCaseData> Readers
-        {
-            get
-            {
-                yield return new TestCaseData(new Reader()
-                {
-                    Id = 1,
-                    FirstName = "Vadzim",
-                    LastName = "Kurdzesau",
-                    Email = "VadzimKurdzesau@mail.com",
-                    Phone = "+375112223344",
-                    CityId = 1,
-                    Address = "Middle st.",
-                    Zip = "111222"
-                });
-
-                yield return new TestCaseData(new Reader()
-                {
-                    FirstName = "Nickolay",
-                    LastName = "Andreev",
-                    Email = "NickolayAndreev@mail.com",
-                    Phone = "+375112233445",
-                    CityId = 1,
-                    Address = "Right st.",
-                    Zip = "111223"
-                });
-
-                yield return new TestCaseData(new Reader()
-                {
-                    FirstName = "Zedaph",
-                    LastName = "Egorov",
-                    Email = "ZedaphEgorov@mail.com",
-                    Phone = "+375122334449",
-                    CityId = 2,
-                    Address = "Left st.",
-                    Zip = "121321"
-                });
-            }
-        }
+        private readonly ElectronicLibraryService libraryService;
 
         public ReadersRepositoryTests()
         {
-            ConfigurationManager configurationManager = new ConfigurationManager();
-            ReseedReadersIdentifiers(configurationManager.ConnectionString);
-            this.library = new ElectronicLibraryRepository(configurationManager.ConnectionString);
+            ReseedReadersIdentifiers(Constants.ConnectionString);
+            this.libraryService = new ElectronicLibraryService(Constants.ConnectionString);
         }
 
         private static void ReseedReadersIdentifiers(string connectionString)
@@ -73,14 +32,15 @@ namespace ElectronicLibrary.Tests
         [Test]
         public void ReaderRepositoryTests_FillCities()
         {
-            Assert.AreEqual(6, library.ReaderRepository.Cities.Length);
+            //todo: does it test tests fill cities? 
+            Assert.AreEqual(3, libraryService.ReaderRepository.Cities.Length);
         }
 
         [Order(0)]
-        [TestCaseSource(nameof(Readers))]
+        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
         public void ReaderRepositoryTests_InsertReader(Reader reader)
         {
-            this.library.ReaderRepository.InsertReader(reader);
+            this.libraryService.ReaderRepository.InsertReader(reader);
             Assert.Pass();
         }
 
@@ -89,10 +49,10 @@ namespace ElectronicLibrary.Tests
         public void ReaderRepositoryTests_GetReader()
         {
             int id = 1;
-            foreach (var testData in Readers)
+            foreach (var testData in Readers.GetList())
             {
-                var expected = testData.Arguments[0] as Reader;
-                var actual = this.library.ReaderRepository.GetReader(id);
+                var expected = (Reader) testData.Arguments[0];
+                var actual = this.libraryService.ReaderRepository.GetReader(id);
 
                 Assert.AreEqual(expected.FirstName, actual.FirstName);
                 id++;
@@ -100,27 +60,27 @@ namespace ElectronicLibrary.Tests
         }
 
         [Order(2)]
-        [TestCaseSource(nameof(Readers))]
+        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
         public void ReaderRepositoryTests_FindReadersByName(Reader reader)
         {
-            var actual = this.library.ReaderRepository.FindReadersByName(reader.FirstName, reader.LastName).First()
+            var actual = this.libraryService.ReaderRepository.FindReadersByName(reader.FirstName, reader.LastName).First()
                 .FirstName;
             Assert.AreEqual(actual, reader.FirstName);
         }
 
         [Order(2)]
-        [TestCaseSource(nameof(Readers))]
+        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
         public void ReaderRepositoryTests_FindReaderByPhone(Reader reader)
         {
-            var actual = this.library.ReaderRepository.FindReaderByPhone(reader.Phone).FirstName;
+            var actual = this.libraryService.ReaderRepository.FindReaderByPhone(reader.Phone).FirstName;
             Assert.AreEqual(actual, reader.FirstName);
         }
 
         [Order(2)]
-        [TestCaseSource(nameof(Readers))]
+        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
         public void ReaderRepositoryTests_FindReaderByEmail(Reader reader)
         {
-            var actual = this.library.ReaderRepository.FindReaderByEmail(reader.Email).FirstName;
+            var actual = this.libraryService.ReaderRepository.FindReaderByEmail(reader.Email).FirstName;
             Assert.AreEqual(actual, reader.FirstName);
         }
 
@@ -130,7 +90,7 @@ namespace ElectronicLibrary.Tests
         {
             int index = 0;
             var expected = GetExpectedReaders().ToArray();
-            foreach (var reader in this.library.ReaderRepository.GetAllReaders())
+            foreach (var reader in this.libraryService.ReaderRepository.GetAllReaders())
             {
                 Assert.AreEqual(expected[index].FirstName, reader.FirstName);
                 index++;
@@ -141,29 +101,29 @@ namespace ElectronicLibrary.Tests
         [Test]
         public void ReaderRepositoryTests_UpdateReader()
         {
-            var expected = Readers.First().Arguments[0] as Reader;
+            var expected = Readers.GetList().First().Arguments[0] as Reader;
             expected.FirstName = "Vadim";
 
-            this.library.ReaderRepository.UpdateReader(expected);
-            Assert.AreEqual(expected.FirstName, this.library.ReaderRepository.GetReader(expected.Id).FirstName);
+            this.libraryService.ReaderRepository.UpdateReader(expected);
+            Assert.AreEqual(expected.FirstName, this.libraryService.ReaderRepository.GetReader(expected.Id).FirstName);
         }
 
         [Order(4)]
         [Test]
         public void ReaderRepositoryTests_DeleteReaders()
         {
-            for (int i = 1; i <= Readers.Count(); i++)
+            for (int i = 1; i <= Readers.GetList().Count(); i++)
             {
-                this.library.ReaderRepository.DeleteReader(i);
+                this.libraryService.ReaderRepository.DeleteReader(i);
             }
 
-            Assert.IsEmpty(library.ReaderRepository.GetAllReaders());
+            Assert.IsEmpty(libraryService.ReaderRepository.GetAllReaders());
         }
 
         private static IEnumerable<Reader> GetExpectedReaders()
         {
             List<Reader> expected = new List<Reader>();
-            foreach (var testData in Readers.ToArray())
+            foreach (var testData in Readers.GetList().ToArray())
             {
                 expected.Add(testData.Arguments[0] as Reader);
             }

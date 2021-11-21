@@ -4,6 +4,7 @@ namespace ElectronicLibrary.Models
 {
     public class Book
     {
+        // todo: why init?
         public int Id { get; init; }
 
         public string Name { get; set; }

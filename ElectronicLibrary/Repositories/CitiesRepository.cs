@@ -13,7 +13,7 @@ namespace ElectronicLibrary.Repositories
             this.FillCities();
         }
 
-        public ICollection<City> Cities { get; private set; }
+        public ICollection<City> Cities { get; }
 
         private void FillCities()
         {

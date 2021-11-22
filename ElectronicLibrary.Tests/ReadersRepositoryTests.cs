@@ -29,14 +29,6 @@ namespace ElectronicLibrary.Tests
         }
 
         [Order(0)]
-        [Test]
-        public void ReaderRepositoryTests_FillCities()
-        {
-            //todo: does it test tests fill cities? 
-            Assert.AreEqual(6, libraryService.CitiesRepository.Cities.Count);
-        }
-
-        [Order(0)]
         [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
         public void ReaderRepositoryTests_InsertReader(Reader reader)
         {

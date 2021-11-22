@@ -91,7 +91,8 @@ namespace ElectronicLibrary.Repositories
                                           WHERE 
                                                 id = @Id";
 
-            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader);
+            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader)
+                                    .AddParameter("@Id", reader.Id);
             command.ExecuteNonQuery();
         }
 
@@ -108,7 +109,7 @@ namespace ElectronicLibrary.Repositories
                                           WHERE dbo.readers.id = @Id;";
 
             using var command = this.GetSqlCommand(queryString, GetSqlConnection())
-                                        .AddParameter("@Id", id);
+                                    .AddParameter("@Id", id);
             command.ExecuteNonQuery();
         }
 

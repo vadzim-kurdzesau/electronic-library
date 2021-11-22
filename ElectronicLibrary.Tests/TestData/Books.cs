@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests.TestData
 {
-    class Books
+    internal class Books
     {
         public static IEnumerable<TestCaseData> GetList()
         {

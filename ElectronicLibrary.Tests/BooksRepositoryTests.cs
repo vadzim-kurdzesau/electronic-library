@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Tests.TestData;
+using ElectronicLibrary.Tests.Comparators;
 using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests
 {
     [TestFixture]
-    //[Ignore("Needs Rework")]
     public class BooksRepositoryTests
     {
         // TODO: implement Book comparator
@@ -63,7 +62,7 @@ namespace ElectronicLibrary.Tests
                 var expected = testData.Arguments[0] as Book;
                 var actual = this.library.BooksRepository.FindBooksByName(expected.Name).FirstOrDefault();
 
-                Assert.AreEqual(expected.Name, actual.Name);
+                Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
@@ -76,7 +75,7 @@ namespace ElectronicLibrary.Tests
                 var expected = testData.Arguments[0] as Book;
                 var actual = this.library.BooksRepository.FindBooksByAuthor(expected.Author).FirstOrDefault();
 
-                Assert.AreEqual(expected.Name, actual.Name);
+                Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
@@ -89,7 +88,7 @@ namespace ElectronicLibrary.Tests
                 var expected = testData.Arguments[0] as Book;
                 var actual = this.library.BooksRepository.GetBook(expected.Id);
 
-                Assert.AreEqual(expected.Name, actual.Name);
+                Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
@@ -112,9 +111,9 @@ namespace ElectronicLibrary.Tests
         {
             int index = 0;
             var expected = GetExpectedBooks().ToArray();
-            foreach (var reader in this.library.BooksRepository.GetAllBooks())
+            foreach (var actual in this.library.BooksRepository.GetAllBooks())
             {
-                Assert.AreEqual(expected[index].Name, reader.Name);
+                Assert.IsTrue(new BookComparator().Equals(expected[index], actual));
                 index++;
             }
         }
@@ -127,7 +126,7 @@ namespace ElectronicLibrary.Tests
             expected.Author = "Jane Austen";
 
             this.library.BooksRepository.UpdateBook(expected);
-            Assert.AreEqual(expected.Author, this.library.BooksRepository.FindBooksByAuthor(expected.Author).First().Author);
+            Assert.IsTrue(new BookComparator().Equals(expected, this.library.BooksRepository.FindBooksByAuthor(expected.Author).First()));
         }
 
         [Order(4)]

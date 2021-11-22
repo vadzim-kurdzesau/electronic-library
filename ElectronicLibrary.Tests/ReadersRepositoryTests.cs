@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using ElectronicLibrary.Models;
+using ElectronicLibrary.Tests.Comparators;
 using ElectronicLibrary.Tests.TestData;
 using NUnit.Framework;
 
@@ -40,40 +41,37 @@ namespace ElectronicLibrary.Tests
         [Test]
         public void ReaderRepositoryTests_GetReader()
         {
-            int id = 1;
             foreach (var testData in Readers.GetList())
             {
                 var expected = (Reader) testData.Arguments[0];
-                var actual = this.libraryService.ReaderRepository.GetReader(id);
+                var actual = this.libraryService.ReaderRepository.GetReader(expected.Id);
 
-                Assert.AreEqual(expected.FirstName, actual.FirstName);
-                id++;
+                Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
             }
         }
 
         [Order(2)]
         [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReadersByName(Reader reader)
+        public void ReaderRepositoryTests_FindReadersByName(Reader expected)
         {
-            var actual = this.libraryService.ReaderRepository.FindReadersByName(reader.FirstName, reader.LastName).First()
-                .FirstName;
-            Assert.AreEqual(actual, reader.FirstName);
+            var actual = this.libraryService.ReaderRepository.FindReadersByName(expected.FirstName, expected.LastName).First();
+            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
         }
 
         [Order(2)]
         [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReaderByPhone(Reader reader)
+        public void ReaderRepositoryTests_FindReaderByPhone(Reader expected)
         {
-            var actual = this.libraryService.ReaderRepository.FindReaderByPhone(reader.Phone).FirstName;
-            Assert.AreEqual(actual, reader.FirstName);
+            var actual = this.libraryService.ReaderRepository.FindReaderByPhone(expected.Phone);
+            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
         }
 
         [Order(2)]
         [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReaderByEmail(Reader reader)
+        public void ReaderRepositoryTests_FindReaderByEmail(Reader expected)
         {
-            var actual = this.libraryService.ReaderRepository.FindReaderByEmail(reader.Email).FirstName;
-            Assert.AreEqual(actual, reader.FirstName);
+            var actual = this.libraryService.ReaderRepository.FindReaderByEmail(expected.Email);
+            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
         }
 
         [Order(2)]
@@ -82,9 +80,9 @@ namespace ElectronicLibrary.Tests
         {
             int index = 0;
             var expected = GetExpectedReaders().ToArray();
-            foreach (var reader in this.libraryService.ReaderRepository.GetAllReaders())
+            foreach (var actual in this.libraryService.ReaderRepository.GetAllReaders())
             {
-                Assert.AreEqual(expected[index].FirstName, reader.FirstName);
+                Assert.IsTrue(new ReaderComparator().Equals(expected[index], actual));
                 index++;
             }
         }
@@ -97,7 +95,7 @@ namespace ElectronicLibrary.Tests
             expected.FirstName = "Vadim";
 
             this.libraryService.ReaderRepository.UpdateReader(expected);
-            Assert.AreEqual(expected.FirstName, this.libraryService.ReaderRepository.GetReader(expected.Id).FirstName);
+            Assert.IsTrue(new ReaderComparator().Equals(expected, this.libraryService.ReaderRepository.GetReader(expected.Id)));
         }
 
         [Order(4)]

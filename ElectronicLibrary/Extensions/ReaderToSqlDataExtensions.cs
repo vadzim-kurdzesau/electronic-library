@@ -17,6 +17,7 @@ namespace ElectronicLibrary.Extensions
         internal static SqlCommand ProvideWithReaderParameters(this SqlCommand sqlCommand, Reader reader)
         {
             sqlCommand
+                .AddParameter("@Id", reader.Id)
                 .AddParameter("@FirstName", reader.FirstName)
                 .AddParameter("@LastName", reader.LastName)
                 .AddParameter("@Email", reader.Email)

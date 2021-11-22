@@ -33,7 +33,7 @@ namespace ElectronicLibrary.Tests
         public void ReaderRepositoryTests_FillCities()
         {
             //todo: does it test tests fill cities? 
-            Assert.AreEqual(3, libraryService.ReaderRepository.Cities.Length);
+            Assert.AreEqual(6, libraryService.CitiesRepository.Cities.Count);
         }
 
         [Order(0)]

@@ -6,53 +6,19 @@ using System.Data;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Extensions;
 
-namespace ElectronicLibrary
+namespace ElectronicLibrary.Repositories
 {
     public class ReadersRepository: BaseRepository
     {
         internal ReadersRepository(string connectionString) : base(connectionString)
         {
-            // todo: it's better to have separate CitiesRepository and move this logic there 
-            // todo: why array and not list? 
-            this.Cities = new City[this.GetNumberOfCities()];
-            this.FillCitiesArray();
         }
-
-        private void FillCitiesArray()
-        {
-            const string queryString = "SELECT * FROM dbo.cities;";
-            var index = 0;
-
-            using (var sqlConnection = GetSqlConnection())
-            {
-                using (var sqlCommand = this.GetSqlCommand(queryString, sqlConnection))
-                {
-                    var citiesCollection = sqlCommand.GetCities();
-                    foreach (var city in citiesCollection)
-                    {
-                        this.Cities[index] = city;
-                        index++;
-                    }
-                }
-            }
-        }
-
-        private int GetNumberOfCities()
-        {
-            // todo: change to using in all methods / files
-            const string queryString = "SELECT COUNT(*) FROM dbo.cities;";
-            using var reader = this.GetSqlCommand(queryString, GetSqlConnection()).ExecuteReader();
-            reader.Read();
-
-            return (int)reader[0];
-        }
-
-        public City[] Cities { get; private set; }
 
         public IEnumerable<Reader> GetAllReaders()
         {
             const string queryString = @"SELECT * FROM dbo.readers;";
-            return this.GetSqlCommand(queryString, GetSqlConnection()).GetReaders();
+            return this.GetSqlCommand(queryString, GetSqlConnection())
+                       .GetReaders();
         }
 
         public Reader GetReader(int id)
@@ -61,7 +27,10 @@ namespace ElectronicLibrary
                                            FROM dbo.readers 
                                           WHERE dbo.readers.id = @Id;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection()).AddParameter("@Id", id).GetReaders().FirstOrDefault();
+            return this.GetSqlCommand(queryString, GetSqlConnection())
+                       .AddParameter("@Id", id)
+                       .GetReaders()
+                       .FirstOrDefault();
         }
 
         public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
@@ -71,7 +40,9 @@ namespace ElectronicLibrary
                                           WHERE dbo.readers.first_name = @FirstName 
                                             AND dbo.readers.last_name  = @LastName;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection()).ProvideWithNameParameters(firstName, lastName).GetReaders();
+            return this.GetSqlCommand(queryString, GetSqlConnection())
+                       .ProvideWithNameParameters(firstName, lastName)
+                       .GetReaders();
         }
 
         public Reader FindReaderByPhone(string phone)
@@ -80,7 +51,10 @@ namespace ElectronicLibrary
                                            FROM dbo.readers 
                                           WHERE dbo.readers.phone = @Phone;";
 
-            return GetSqlCommand(queryString, GetSqlConnection()).AddParameter("@Phone", phone).GetReaders().FirstOrDefault();
+            return this.GetSqlCommand(queryString, GetSqlConnection())
+                       .AddParameter("@Phone", phone)
+                       .GetReaders()
+                       .FirstOrDefault();
         }
 
         public Reader FindReaderByEmail(string email)
@@ -89,13 +63,16 @@ namespace ElectronicLibrary
                                            FROM dbo.readers 
                                           WHERE dbo.readers.email = @Email;";
 
-            return GetSqlCommand(queryString, GetSqlConnection()).AddParameter("@Email", email).GetReaders().FirstOrDefault();
+            return this.GetSqlCommand(queryString, GetSqlConnection())
+                       .AddParameter("@Email", email)
+                       .GetReaders()
+                       .FirstOrDefault();
         }
 
         public void InsertReader(Reader reader)
         {
             const string queryString = "dbo.sp_readers_insert";
-            var command = this.GetSqlCommand(queryString, GetSqlConnection()).ProvideWithReaderParameters(reader);
+            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader);
             command.CommandType = CommandType.StoredProcedure;
             command.ExecuteNonQuery();
         }
@@ -114,11 +91,15 @@ namespace ElectronicLibrary
                                           WHERE 
                                                 id = @Id";
 
-            //todo: one line - one operation / whole solution
-            this.GetSqlCommand(queryString, GetSqlConnection())
-                .ProvideWithReaderParameters(reader)
-                .AddParameter("@Id", reader.Id)
-                .ExecuteNonQuery();
+            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader);
+            command.ExecuteNonQuery();
+        }
+
+        private SqlCommand InitializeCommandAndProvideReaderParameter(string queryString, Reader reader)
+        {
+            var connection = this.GetSqlConnection();
+            return this.GetSqlCommand(queryString, connection)
+                       .ProvideWithReaderParameters(reader);
         }
 
         public void DeleteReader(int id)
@@ -126,10 +107,12 @@ namespace ElectronicLibrary
             const string queryString = @"DELETE dbo.readers 
                                           WHERE dbo.readers.id = @Id;";
 
-            this.GetSqlCommand(queryString, GetSqlConnection()).AddParameter("@Id", id).ExecuteNonQuery();
+            using var command = this.GetSqlCommand(queryString, GetSqlConnection())
+                                        .AddParameter("@Id", id);
+            command.ExecuteNonQuery();
         }
 
-        private SqlCommand GetSqlCommand(string queryString, SqlConnection sqlConnection)
+        internal SqlCommand GetSqlCommand(string queryString, SqlConnection sqlConnection)
             => new SqlCommand(queryString, sqlConnection);
     }
 }

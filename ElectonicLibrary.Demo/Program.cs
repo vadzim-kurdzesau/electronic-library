@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using ElectronicLibrary.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace ElectronicLibrary.Demo
@@ -28,6 +27,7 @@ namespace ElectronicLibrary.Demo
                     .AddJsonFile("appsettings.json");
                 _config = builder.Build();
             } 
+
             return _config;
         }
     }

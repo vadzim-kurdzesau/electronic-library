@@ -11,8 +11,6 @@ namespace ElectronicLibrary.Tests
     [TestFixture]
     public class BooksRepositoryTests
     {
-        // TODO: implement Book comparator
-
         private readonly ElectronicLibraryService library;
 
         public BooksRepositoryTests()

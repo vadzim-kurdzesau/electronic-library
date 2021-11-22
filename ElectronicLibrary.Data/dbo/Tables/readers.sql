@@ -7,8 +7,8 @@
     [city_id]    INT            NOT NULL,
     [address]    NVARCHAR (100) NOT NULL,
     [zip]        CHAR (6)       NOT NULL,
-    PRIMARY KEY CLUSTERED ([id] ASC),
-    CONSTRAINT [FK_readers_to_cities] FOREIGN KEY ([city_id]) REFERENCES [dbo].[cities] ([id]),
-    UNIQUE NONCLUSTERED ([email] ASC, [phone] ASC)
+    CONSTRAINT [pk_readers_id] PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [fk_readers_to_cities] FOREIGN KEY ([city_id]) REFERENCES [dbo].[cities] ([id]),
+    CONSTRAINT [ux_readers_email_phone] UNIQUE NONCLUSTERED ([email] ASC, [phone] ASC), -- todo: sg: how this would work?
 );
 

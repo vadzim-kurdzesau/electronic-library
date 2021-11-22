@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[cities] (
-    [id]   INT           IDENTITY (1, 1) NOT NULL,
+    [id]   INT           NOT NULL,
     [name] NVARCHAR (20) NOT NULL,
-    PRIMARY KEY CLUSTERED ([id] ASC),
-    UNIQUE NONCLUSTERED ([name] ASC)
-);
 
+    CONSTRAINT [pk_cities_id] PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [ux_cities_name] UNIQUE NONCLUSTERED ([name] ASC),
+);

@@ -11,11 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicLibrary.Tests", "
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ElectronicLibrary.Data", "ElectronicLibrary.Data\ElectronicLibrary.Data.sqlproj", "{5A25E385-9767-4EA1-821D-569968175CFF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9FCDFDD3-D093-448D-8702-513900868A41}"
-	ProjectSection(SolutionItems) = preProject
-		appsettings.json = appsettings.json
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

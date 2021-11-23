@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +16,7 @@ namespace ElectronicLibrary.Repositories
         public IEnumerable<Reader> GetAllReaders()
         {
             const string queryString = @"SELECT * FROM dbo.readers;";
+            using var connection = this.GetSqlConnection();
             return this.GetSqlCommand(queryString, GetSqlConnection())
                        .GetReaders();
         }
@@ -27,7 +27,8 @@ namespace ElectronicLibrary.Repositories
                                            FROM dbo.readers 
                                           WHERE dbo.readers.id = @Id;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection())
+            using var connection = this.GetSqlConnection();
+            return this.GetSqlCommand(queryString, connection)
                        .AddParameter("@Id", id)
                        .GetReaders()
                        .FirstOrDefault();
@@ -40,9 +41,10 @@ namespace ElectronicLibrary.Repositories
                                           WHERE dbo.readers.first_name = @FirstName 
                                             AND dbo.readers.last_name  = @LastName;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection())
+            using var connection = this.GetSqlConnection();
+            return this.GetSqlCommand(queryString, connection)
                        .ProvideWithNameParameters(firstName, lastName)
-                       .GetReaders();
+                       .GetReaders().ToArray();
         }
 
         public Reader FindReaderByPhone(string phone)
@@ -51,7 +53,8 @@ namespace ElectronicLibrary.Repositories
                                            FROM dbo.readers 
                                           WHERE dbo.readers.phone = @Phone;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection())
+            using var connection = this.GetSqlConnection();
+            return this.GetSqlCommand(queryString, connection)
                        .AddParameter("@Phone", phone)
                        .GetReaders()
                        .FirstOrDefault();
@@ -63,7 +66,8 @@ namespace ElectronicLibrary.Repositories
                                            FROM dbo.readers 
                                           WHERE dbo.readers.email = @Email;";
 
-            return this.GetSqlCommand(queryString, GetSqlConnection())
+            using var connection = this.GetSqlConnection();
+            return this.GetSqlCommand(queryString, connection)
                        .AddParameter("@Email", email)
                        .GetReaders()
                        .FirstOrDefault();

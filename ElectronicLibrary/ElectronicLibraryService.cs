@@ -20,26 +20,32 @@ namespace ElectronicLibrary
 
         public CitiesRepository CitiesRepository { get; }
 
-        public void Dispose()
-        {
-            //todo: rework and re-enable
-            // this.BooksRepository.SaveChanges(this.sqlConnection);
-            Dispose(disposing: true);
-        }
-
-        // todo: what is missing in Dispose pattern?
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    // todo: rework and re-enable, probably for the whole BooksRepository level
-                    // this.sqlConnection.Dispose();
+                    // TODO: dispose managed state (managed objects)
                 }
 
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
                 _disposedValue = true;
             }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~ElectronicLibraryService()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

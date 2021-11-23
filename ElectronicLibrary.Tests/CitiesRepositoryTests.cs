@@ -10,7 +10,7 @@ namespace ElectronicLibrary.Tests
 
         public CitiesRepositoryTests()
         {
-            this._libraryService = new ElectronicLibraryService(Constants.ConnectionString);
+            this._libraryService = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace ElectronicLibrary.Tests
         {
             const string queryString = "SELECT COUNT(*) FROM dbo.cities;";
 
-            using var sqlConnection = new SqlConnection(Constants.ConnectionString);
+            using var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionString);
             sqlConnection.Open();
             var command = new SqlCommand(queryString, sqlConnection);
             var reader = command.ExecuteReader();

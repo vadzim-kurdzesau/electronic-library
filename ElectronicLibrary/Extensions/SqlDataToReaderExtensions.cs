@@ -8,7 +8,7 @@ namespace ElectronicLibrary.Extensions
     {
         internal static IEnumerable<Reader> GetReaders(this SqlCommand command)
         {
-            using var reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 yield return CreateReaderObject(reader);

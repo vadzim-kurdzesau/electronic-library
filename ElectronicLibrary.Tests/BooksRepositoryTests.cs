@@ -15,7 +15,7 @@ namespace ElectronicLibrary.Tests
 
         public BooksRepositoryTests()
         {
-            this.library = new ElectronicLibraryService(Constants.ConnectionString);
+            this.library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
         private static void ReseedReadersIdentifiers(string connectionString)

@@ -1,53 +1,51 @@
 ﻿using System;
-using System.Data.SqlClient;
+using ElectronicLibrary.Repositories;
 
 namespace ElectronicLibrary
 {
-    public class ElectronicLibraryService : IDisposable
+    public class ElectronicLibraryService: IDisposable
     {
-        private bool disposedValue;
+        private bool _disposedValue;
 
         public ElectronicLibraryService(string connectionString)
         {
-            ValidateConnectionString(connectionString);
-
             this.ReaderRepository = new ReadersRepository(connectionString);
-            //todo: rework and re-enable
-            //this.BooksRepository = new BooksRepository(connectionString);
+            this.CitiesRepository = new CitiesRepository(connectionString);
+            this.BooksRepository = new BooksRepository(connectionString);
         }
 
         public ReadersRepository ReaderRepository { get; }
 
         public BooksRepository BooksRepository { get; }
 
-        public void Dispose()
-        {
-            //todo: rework and re-enable
-            // this.BooksRepository.SaveChanges(this.sqlConnection);
-            Dispose(disposing: true);
-        }
+        public CitiesRepository CitiesRepository { get; }
 
-        // todo: what is missing in Dispose pattern?
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    // todo: rework and re-enable, probably for the whole BooksRepository level
-                    // this.sqlConnection.Dispose();
+                    // TODO: dispose managed state (managed objects)
                 }
 
-                disposedValue = true;
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                _disposedValue = true;
             }
         }
 
-        private static void ValidateConnectionString(string connectionString)
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~ElectronicLibraryService()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString), "Connection string can't be null, empty or a whitespace.");
-            }
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

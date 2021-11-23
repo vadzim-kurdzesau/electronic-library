@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests.TestData
 {
-    class Readers
+    internal class Readers
     {
         public static IEnumerable<TestCaseData> GetList()
         {
@@ -22,6 +22,7 @@ namespace ElectronicLibrary.Tests.TestData
 
             yield return new TestCaseData(new Reader()
             {
+                Id = 2,
                 FirstName = "Nickolay",
                 LastName = "Andreev",
                 Email = "NickolayAndreev@mail.com",
@@ -33,6 +34,7 @@ namespace ElectronicLibrary.Tests.TestData
 
             yield return new TestCaseData(new Reader()
             {
+                Id = 3,
                 FirstName = "Zedaph",
                 LastName = "Egorov",
                 Email = "ZedaphEgorov@mail.com",

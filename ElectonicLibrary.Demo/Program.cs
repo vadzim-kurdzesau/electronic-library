@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using ElectronicLibrary.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace ElectronicLibrary.Demo
@@ -15,7 +14,7 @@ namespace ElectronicLibrary.Demo
             var connectionString = GetConfig().GetSection("connectionStrings")["mainDB"];
 
             using var service = new ElectronicLibraryService(connectionString);
-            var readerRepositoryCities = service.ReaderRepository.Cities;
+            var readerRepositoryCities = service.CitiesRepository.Cities;
             Console.WriteLine(string.Join(", ", readerRepositoryCities.Select(c => c.Name).ToList()));
         }
 
@@ -28,6 +27,7 @@ namespace ElectronicLibrary.Demo
                     .AddJsonFile("appsettings.json");
                 _config = builder.Build();
             } 
+
             return _config;
         }
     }

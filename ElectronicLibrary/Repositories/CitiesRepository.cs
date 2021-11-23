@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
-using ElectronicLibrary.Extensions;
+using Dapper;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
@@ -34,13 +33,10 @@ namespace ElectronicLibrary.Repositories
 
             using (var sqlConnection = GetSqlConnection())
             {
-                using (var sqlCommand = new SqlCommand(queryString, sqlConnection))
+                var cities = sqlConnection.Query<City>(queryString);
+                foreach (var city in cities)
                 {
-                    var citiesCollection = sqlCommand.GetCities();
-                    foreach (var city in citiesCollection)
-                    {
-                        this._cities.Add(city);
-                    }
+                    this._cities.Add(city);
                 }
             }
         }

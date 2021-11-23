@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
+using Dapper;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Extensions;
 
@@ -15,62 +16,91 @@ namespace ElectronicLibrary.Repositories
 
         public IEnumerable<Reader> GetAllReaders()
         {
-            const string queryString = @"SELECT * FROM dbo.readers;";
+            const string queryString = @"SELECT id,
+                                                first_name AS FirstName,
+                                                last_name  AS LastName,
+                                                email,
+                                                phone,
+                                                city_id    AS CityId,
+                                                address,
+                                                zip
+                                         FROM dbo.readers;";
+
             using var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, GetSqlConnection())
-                       .GetReaders();
+            return connection.Query<Reader>(queryString);
         }
 
         public Reader GetReader(int id)
         {
-            const string queryString = @"SELECT * 
-                                           FROM dbo.readers 
-                                          WHERE dbo.readers.id = @Id;";
+            // TODO: extract StringBuilder
+
+            const string queryString = @"SELECT id,
+                                                first_name AS FirstName,
+                                                last_name  AS LastName,
+                                                email,
+                                                phone,
+                                                city_id    AS CityId,
+                                                address,
+                                                zip
+                                         FROM dbo.readers
+                                         WHERE dbo.readers.id = @Id;";
 
             using var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, connection)
-                       .AddParameter("@Id", id)
-                       .GetReaders()
-                       .FirstOrDefault();
+            return connection.QueryFirstOrDefault<Reader>(queryString, new {Id = id});
         }
 
         public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
         {
-            const string queryString = @"SELECT * 
+            const string queryString = @"SELECT id,
+                                                first_name AS FirstName,
+                                                last_name  AS LastName,
+                                                email,
+                                                phone,
+                                                city_id    AS CityId,
+                                                address,
+                                                zip 
                                            FROM dbo.readers 
                                           WHERE dbo.readers.first_name = @FirstName 
                                             AND dbo.readers.last_name  = @LastName;";
 
             using var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, connection)
-                       .ProvideWithNameParameters(firstName, lastName)
-                       .GetReaders().ToArray();
+
+            // TODO: extract method
+            return connection.Query<Reader>(queryString, new { FirstName = firstName, LastName = lastName });
         }
 
         public Reader FindReaderByPhone(string phone)
         {
-            const string queryString = @"SELECT * 
+            const string queryString = @"SELECT id,
+                                                first_name AS FirstName,
+                                                last_name  AS LastName,
+                                                email,
+                                                phone,
+                                                city_id    AS CityId,
+                                                address,
+                                                zip 
                                            FROM dbo.readers 
                                           WHERE dbo.readers.phone = @Phone;";
 
             using var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, connection)
-                       .AddParameter("@Phone", phone)
-                       .GetReaders()
-                       .FirstOrDefault();
+            return connection.QueryFirstOrDefault<Reader>(queryString, new { Phone = phone });
         }
 
         public Reader FindReaderByEmail(string email)
         {
-            const string queryString = @"SELECT * 
+            const string queryString = @"SELECT id,
+                                                first_name AS FirstName,
+                                                last_name  AS LastName,
+                                                email,
+                                                phone,
+                                                city_id    AS CityId,
+                                                address,
+                                                zip  
                                            FROM dbo.readers 
                                           WHERE dbo.readers.email = @Email;";
 
             using var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, connection)
-                       .AddParameter("@Email", email)
-                       .GetReaders()
-                       .FirstOrDefault();
+            return connection.QueryFirstOrDefault<Reader>(queryString, new { Email = email });
         }
 
         public void InsertReader(Reader reader)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -28,12 +29,15 @@ namespace ElectronicLibrary.Repositories
 
         public Reader GetReader(int id)
         {
+            ValidateId(id);
             using var connection = this.GetSqlConnection();
             return connection.Get<Reader>(id);
         }
 
         public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
         {
+            ValidateName(firstName, lastName);
+
             const string queryString = @"SELECT *
                                            FROM dbo.readers 
                                           WHERE dbo.readers.first_name = @FirstName 
@@ -47,8 +51,16 @@ namespace ElectronicLibrary.Repositories
             });
         }
 
+        private static void ValidateName(string firstName, string lastName)
+        {
+            ValidateString(firstName);
+            ValidateString(lastName);
+        }
+
         public Reader FindReaderByPhone(string phone)
         {
+            ValidateString(phone);
+
             const string queryString = @"SELECT *
                                            FROM dbo.readers 
                                           WHERE dbo.readers.phone = @Phone;";
@@ -57,8 +69,19 @@ namespace ElectronicLibrary.Repositories
             return connection.QueryFirstOrDefault<Reader>(queryString, new { Phone = phone });
         }
 
+        private static void ValidateString(string stringToValidate)
+        {
+            if (string.IsNullOrWhiteSpace(stringToValidate))
+            {
+                throw new ArgumentNullException(nameof(stringToValidate),
+                    "String can't be null, empty or a whitespace.");
+            }
+        }
+
         public Reader FindReaderByEmail(string email)
         {
+            ValidateString(email);
+
             const string queryString = @"SELECT * 
                                            FROM dbo.readers 
                                           WHERE dbo.readers.email = @Email;";
@@ -76,6 +99,8 @@ namespace ElectronicLibrary.Repositories
 
         public void UpdateReader(Reader reader)
         {
+            ValidateReader(reader);
+
             const string queryString = @"UPDATE dbo.readers 
                                             SET 
                                                 first_name  =   @FirstName, 
@@ -92,8 +117,18 @@ namespace ElectronicLibrary.Repositories
             connection.Execute(queryString, ProvideReaderParametersWithId(reader));
         }
 
+        private static void ValidateReader(Reader reader)
+        {
+            if (reader is null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+        }
+
         public void DeleteReader(int id)
         {
+            ValidateId(id);
+
             //const string queryString = @"DELETE dbo.readers 
             //                              WHERE dbo.readers.id = @Id;";
 

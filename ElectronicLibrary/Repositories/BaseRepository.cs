@@ -10,7 +10,7 @@ namespace ElectronicLibrary.Repositories
         internal BaseRepository(string connectionString)
         {
             ValidateConnectionString(connectionString);
-            _connectionString = connectionString;
+            this._connectionString = connectionString;
         }
 
         internal SqlConnection GetSqlConnection()
@@ -18,6 +18,14 @@ namespace ElectronicLibrary.Repositories
             var sqlConnection = new SqlConnection(_connectionString);
             sqlConnection.Open();
             return sqlConnection;
+        }
+
+        internal static void ValidateId(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ApplicationException("Id can't be negative or equal zero.");
+            }
         }
 
         private static void ValidateConnectionString(string connectionString)

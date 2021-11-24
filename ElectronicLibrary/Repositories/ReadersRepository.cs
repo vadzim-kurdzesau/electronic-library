@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using ElectronicLibrary.Models;
-using ElectronicLibrary.Extensions;
 
 namespace ElectronicLibrary.Repositories
 {
@@ -106,9 +104,17 @@ namespace ElectronicLibrary.Repositories
         public void InsertReader(Reader reader)
         {
             const string queryString = "dbo.sp_readers_insert";
-            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader);
-            command.CommandType = CommandType.StoredProcedure;
-            command.ExecuteNonQuery();
+            using var connection = this.GetSqlConnection();
+            connection.Execute(queryString, new
+            {
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                Email = reader.Email,
+                Phone = reader.Phone,
+                CityId = reader.CityId,
+                Address = reader.Address,
+                Zip = reader.Zip
+            }, commandType: CommandType.StoredProcedure);
         }
 
         public void UpdateReader(Reader reader)
@@ -116,7 +122,7 @@ namespace ElectronicLibrary.Repositories
             const string queryString = @"UPDATE dbo.readers 
                                             SET 
                                                 first_name  =   @FirstName, 
-                                                last_name   =   @LastName,
+                                                last_name   =  @LastName,
                                                 email       =   @Email,
                                                 phone       =   @Phone, 
                                                 city_id     =   @CityId,
@@ -125,16 +131,18 @@ namespace ElectronicLibrary.Repositories
                                           WHERE 
                                                 id = @Id";
 
-            using var command = this.InitializeCommandAndProvideReaderParameter(queryString, reader)
-                                    .AddParameter("@Id", reader.Id);
-            command.ExecuteNonQuery();
-        }
-
-        private SqlCommand InitializeCommandAndProvideReaderParameter(string queryString, Reader reader)
-        {
-            var connection = this.GetSqlConnection();
-            return this.GetSqlCommand(queryString, connection)
-                       .ProvideWithReaderParameters(reader);
+            using var connection = this.GetSqlConnection();
+            connection.Execute(queryString, new
+            {
+                Id = reader.Id,
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                Email = reader.Email,
+                Phone = reader.Phone,
+                CityId = reader.CityId,
+                Address = reader.Address,
+                Zip = reader.Zip
+            });
         }
 
         public void DeleteReader(int id)
@@ -142,9 +150,11 @@ namespace ElectronicLibrary.Repositories
             const string queryString = @"DELETE dbo.readers 
                                           WHERE dbo.readers.id = @Id;";
 
-            using var command = this.GetSqlCommand(queryString, GetSqlConnection())
-                                    .AddParameter("@Id", id);
-            command.ExecuteNonQuery();
+            using var connection = this.GetSqlConnection();
+            connection.Execute(queryString, new
+            {
+                Id = id
+            });
         }
 
         internal SqlCommand GetSqlCommand(string queryString, SqlConnection sqlConnection)

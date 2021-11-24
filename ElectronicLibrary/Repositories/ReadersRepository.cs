@@ -1,82 +1,55 @@
-﻿using System.Data.SqlClient;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using Dapper;
+using Dapper.Contrib.Extensions;
+using Dapper.FluentMap;
+using ElectronicLibrary.EntityMaps;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
 {
     public class ReadersRepository: BaseRepository
     {
+        static ReadersRepository()
+            => FluentMapper.Initialize(config =>
+            {
+                config.AddMap(new ReaderMap());
+            });
+
         internal ReadersRepository(string connectionString) : base(connectionString)
         {
         }
 
         public IEnumerable<Reader> GetAllReaders()
         {
-            const string queryString = @"SELECT id,
-                                                first_name AS FirstName,
-                                                last_name  AS LastName,
-                                                email,
-                                                phone,
-                                                city_id    AS CityId,
-                                                address,
-                                                zip
-                                         FROM dbo.readers;";
-
             using var connection = this.GetSqlConnection();
-            return connection.Query<Reader>(queryString);
+            return connection.GetAll<Reader>();
         }
 
         public Reader GetReader(int id)
         {
-            // TODO: extract StringBuilder
-
-            const string queryString = @"SELECT id,
-                                                first_name AS FirstName,
-                                                last_name  AS LastName,
-                                                email,
-                                                phone,
-                                                city_id    AS CityId,
-                                                address,
-                                                zip
-                                         FROM dbo.readers
-                                         WHERE dbo.readers.id = @Id;";
-
             using var connection = this.GetSqlConnection();
-            return connection.QueryFirstOrDefault<Reader>(queryString, new {Id = id});
+            return connection.Get<Reader>(id);
         }
 
         public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
         {
-            const string queryString = @"SELECT id,
-                                                first_name AS FirstName,
-                                                last_name  AS LastName,
-                                                email,
-                                                phone,
-                                                city_id    AS CityId,
-                                                address,
-                                                zip 
+            const string queryString = @"SELECT *
                                            FROM dbo.readers 
                                           WHERE dbo.readers.first_name = @FirstName 
                                             AND dbo.readers.last_name  = @LastName;";
 
             using var connection = this.GetSqlConnection();
-
-            // TODO: extract method
-            return connection.Query<Reader>(queryString, new { FirstName = firstName, LastName = lastName });
+            return connection.Query<Reader>(queryString, new
+            {
+                FirstName = firstName,
+                LastName = lastName
+            });
         }
 
         public Reader FindReaderByPhone(string phone)
         {
-            const string queryString = @"SELECT id,
-                                                first_name AS FirstName,
-                                                last_name  AS LastName,
-                                                email,
-                                                phone,
-                                                city_id    AS CityId,
-                                                address,
-                                                zip 
+            const string queryString = @"SELECT *
                                            FROM dbo.readers 
                                           WHERE dbo.readers.phone = @Phone;";
 
@@ -86,14 +59,7 @@ namespace ElectronicLibrary.Repositories
 
         public Reader FindReaderByEmail(string email)
         {
-            const string queryString = @"SELECT id,
-                                                first_name AS FirstName,
-                                                last_name  AS LastName,
-                                                email,
-                                                phone,
-                                                city_id    AS CityId,
-                                                address,
-                                                zip  
+            const string queryString = @"SELECT * 
                                            FROM dbo.readers 
                                           WHERE dbo.readers.email = @Email;";
 
@@ -105,16 +71,7 @@ namespace ElectronicLibrary.Repositories
         {
             const string queryString = "dbo.sp_readers_insert";
             using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, new
-            {
-                FirstName = reader.FirstName,
-                LastName = reader.LastName,
-                Email = reader.Email,
-                Phone = reader.Phone,
-                CityId = reader.CityId,
-                Address = reader.Address,
-                Zip = reader.Zip
-            }, commandType: CommandType.StoredProcedure);
+            connection.Execute(queryString, ProvideReaderParameters(reader), commandType: CommandType.StoredProcedure);
         }
 
         public void UpdateReader(Reader reader)
@@ -122,7 +79,7 @@ namespace ElectronicLibrary.Repositories
             const string queryString = @"UPDATE dbo.readers 
                                             SET 
                                                 first_name  =   @FirstName, 
-                                                last_name   =  @LastName,
+                                                last_name   =   @LastName,
                                                 email       =   @Email,
                                                 phone       =   @Phone, 
                                                 city_id     =   @CityId,
@@ -132,7 +89,33 @@ namespace ElectronicLibrary.Repositories
                                                 id = @Id";
 
             using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, new
+            connection.Execute(queryString, ProvideReaderParametersWithId(reader));
+        }
+
+        public void DeleteReader(int id)
+        {
+            //const string queryString = @"DELETE dbo.readers 
+            //                              WHERE dbo.readers.id = @Id;";
+
+            using var connection = this.GetSqlConnection();
+            connection.Delete(new Reader() {Id = id});
+            //connection.Execute(queryString, new { Id = id });
+        }
+
+        internal static object ProvideReaderParameters(Reader reader)
+            => new
+            {
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                Email = reader.Email,
+                Phone = reader.Phone,
+                CityId = reader.CityId,
+                Address = reader.Address,
+                Zip = reader.Zip
+            };
+
+        internal static object ProvideReaderParametersWithId(Reader reader)
+            => new
             {
                 Id = reader.Id,
                 FirstName = reader.FirstName,
@@ -142,22 +125,6 @@ namespace ElectronicLibrary.Repositories
                 CityId = reader.CityId,
                 Address = reader.Address,
                 Zip = reader.Zip
-            });
-        }
-
-        public void DeleteReader(int id)
-        {
-            const string queryString = @"DELETE dbo.readers 
-                                          WHERE dbo.readers.id = @Id;";
-
-            using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, new
-            {
-                Id = id
-            });
-        }
-
-        internal SqlCommand GetSqlCommand(string queryString, SqlConnection sqlConnection)
-            => new SqlCommand(queryString, sqlConnection);
+            };
     }
 }

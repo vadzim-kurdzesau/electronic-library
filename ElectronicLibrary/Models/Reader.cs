@@ -1,7 +1,11 @@
-﻿namespace ElectronicLibrary.Models
+﻿using Dapper.Contrib.Extensions;
+
+namespace ElectronicLibrary.Models
 {
+    [Table("dbo.readers")]
     public class Reader
     {
+        [Key]
         public int Id { get; set; }
 
         public string FirstName { get; set; }

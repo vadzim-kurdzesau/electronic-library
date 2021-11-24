@@ -137,7 +137,7 @@ namespace ElectronicLibrary.Repositories
             //connection.Execute(queryString, new { Id = id });
         }
 
-        internal static object ProvideReaderParameters(Reader reader)
+        private static object ProvideReaderParameters(Reader reader)
             => new
             {
                 FirstName = reader.FirstName,
@@ -149,7 +149,7 @@ namespace ElectronicLibrary.Repositories
                 Zip = reader.Zip
             };
 
-        internal static object ProvideReaderParametersWithId(Reader reader)
+        private static object ProvideReaderParametersWithId(Reader reader)
             => new
             {
                 Id = reader.Id,

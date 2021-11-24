@@ -15,6 +15,7 @@ namespace ElectronicLibrary.Tests
 
         public BooksRepositoryTests()
         {
+            ReseedReadersIdentifiers(ConfigurationManager.ConnectionString);
             this.library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
@@ -40,7 +41,7 @@ namespace ElectronicLibrary.Tests
         {
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.library.BooksRepository.InsertInventoryNumber(new InventoryNumber()
+                this.library.InventoryNumbersRepository.InsertInventoryNumber(new InventoryNumber()
                 {
                     Id = i,
                     BookId = i,
@@ -97,7 +98,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.GetInventoryNumbers(expected).First();
+                var actual = this.library.InventoryNumbersRepository.GetInventoryNumbers(expected).First();
 
                 Assert.AreEqual(expected.Id, actual.BookId);
             }

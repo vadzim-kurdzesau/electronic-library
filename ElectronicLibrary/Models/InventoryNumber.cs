@@ -1,5 +1,8 @@
-﻿namespace ElectronicLibrary.Models
+﻿using Dapper.Contrib.Extensions;
+
+namespace ElectronicLibrary.Models
 {
+    [Table("dbo.inventory_numbers")]
     public class InventoryNumber
     {
         public int Id { get; set; }

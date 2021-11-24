@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dapper;
+using Dapper.Contrib.Extensions;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
@@ -29,15 +29,10 @@ namespace ElectronicLibrary.Repositories
 
         private void FillCities()
         {
-            const string queryString = "SELECT * FROM dbo.cities;";
-
-            using (var sqlConnection = GetSqlConnection())
+            using var connection = GetSqlConnection();
+            foreach (var city in connection.GetAll<City>())
             {
-                var cities = sqlConnection.Query<City>(queryString);
-                foreach (var city in cities)
-                {
-                    this._cities.Add(city);
-                }
+                this._cities.Add(city);
             }
         }
     }

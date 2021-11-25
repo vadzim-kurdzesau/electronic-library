@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using Dapper.FluentMap;
@@ -38,17 +39,8 @@ namespace ElectronicLibrary.Repositories
         {
             ValidateName(firstName, lastName);
 
-            const string queryString = @"SELECT *
-                                           FROM dbo.readers 
-                                          WHERE dbo.readers.first_name = @FirstName 
-                                            AND dbo.readers.last_name  = @LastName;";
-
-            using var connection = this.GetSqlConnection();
-            return connection.Query<Reader>(queryString, new
-            {
-                FirstName = firstName,
-                LastName = lastName
-            });
+            const string queryString = "dbo.sp_readers_read_by_name";
+            return this.InitializeAndQueryStoredProcedure(queryString, new {FirstName = firstName, LastName = lastName});
         }
 
         private static void ValidateName(string firstName, string lastName)
@@ -61,12 +53,8 @@ namespace ElectronicLibrary.Repositories
         {
             ValidateString(phone);
 
-            const string queryString = @"SELECT *
-                                           FROM dbo.readers 
-                                          WHERE dbo.readers.phone = @Phone;";
-
-            using var connection = this.GetSqlConnection();
-            return connection.QueryFirstOrDefault<Reader>(queryString, new { Phone = phone });
+            const string queryString = "sp_readers_read_by_phone";
+            return InitializeAndQueryStoredProcedure(queryString, new { Phone = phone }).FirstOrDefault();
         }
 
         private static void ValidateString(string stringToValidate)
@@ -82,39 +70,35 @@ namespace ElectronicLibrary.Repositories
         {
             ValidateString(email);
 
-            const string queryString = @"SELECT * 
-                                           FROM dbo.readers 
-                                          WHERE dbo.readers.email = @Email;";
+            const string queryString = "sp_readers_read_by_email";
 
+            return InitializeAndQueryStoredProcedure(queryString, new {Email = email}).FirstOrDefault();
+        }
+
+        private IEnumerable<Reader> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)
+        {
             using var connection = this.GetSqlConnection();
-            return connection.QueryFirstOrDefault<Reader>(queryString, new { Email = email });
+            return connection.Query<Reader>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
         }
 
         public void InsertReader(Reader reader)
         {
             const string queryString = "dbo.sp_readers_insert";
-            using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, ProvideReaderParameters(reader), commandType: CommandType.StoredProcedure);
+            this.InitializeAndExecuteStoredProcedure(queryString, ProvideReaderParameters(reader));
         }
 
         public void UpdateReader(Reader reader)
         {
             ValidateReader(reader);
 
-            const string queryString = @"UPDATE dbo.readers 
-                                            SET 
-                                                first_name  =   @FirstName, 
-                                                last_name   =   @LastName,
-                                                email       =   @Email,
-                                                phone       =   @Phone, 
-                                                city_id     =   @CityId,
-                                                address     =   @Address,
-                                                zip         =   @Zip
-                                          WHERE 
-                                                id = @Id";
+            const string queryString = "dbo.sp_readers_update";
+            this.InitializeAndExecuteStoredProcedure(queryString, ProvideReaderParametersWithId(reader));
+        }
 
+        private void InitializeAndExecuteStoredProcedure(string procedureName, object procedureParameters)
+        {
             using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, ProvideReaderParametersWithId(reader));
+            connection.Execute(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
         }
 
         private static void ValidateReader(Reader reader)
@@ -129,12 +113,8 @@ namespace ElectronicLibrary.Repositories
         {
             ValidateId(id);
 
-            //const string queryString = @"DELETE dbo.readers 
-            //                              WHERE dbo.readers.id = @Id;";
-
-            using var connection = this.GetSqlConnection();
-            connection.Delete(new Reader() {Id = id});
-            //connection.Execute(queryString, new { Id = id });
+            const string queryString = "dbo.sp_readers_delete";
+            this.InitializeAndExecuteStoredProcedure(queryString, new { Id = id });
         }
 
         private static object ProvideReaderParameters(Reader reader)

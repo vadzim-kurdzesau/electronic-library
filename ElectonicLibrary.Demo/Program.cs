@@ -13,7 +13,7 @@ namespace ElectronicLibrary.Demo
         {
             var connectionString = GetConfig().GetSection("connectionStrings")["mainDB"];
 
-            using var service = new ElectronicLibraryService(connectionString);
+            var service = new ElectronicLibraryService(connectionString);
             var readerRepositoryCities = service.CitiesRepository.Cities;
             Console.WriteLine(string.Join(", ", readerRepositoryCities.Select(c => c.Name).ToList()));
         }

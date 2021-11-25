@@ -1,4 +1,5 @@
-﻿using ElectronicLibrary.Repositories;
+﻿using ElectronicLibrary.EntityMaps;
+using ElectronicLibrary.Repositories;
 
 namespace ElectronicLibrary
 {
@@ -10,6 +11,7 @@ namespace ElectronicLibrary
             this.CitiesRepository = new CitiesRepository(connectionString);
             this.BooksRepository = new BooksRepository(connectionString);
             this.InventoryNumbersRepository = new InventoryNumbersRepository(connectionString);
+            var fluentMapInitializer = new FluentMapInitializer();
         }
 
         public ReadersRepository ReaderRepository { get; }

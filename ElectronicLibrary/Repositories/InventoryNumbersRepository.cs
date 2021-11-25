@@ -9,12 +9,6 @@ namespace ElectronicLibrary.Repositories
 {
     public class InventoryNumbersRepository: BaseRepository
     {
-        static InventoryNumbersRepository()
-            => FluentMapper.Initialize(config =>
-            {
-                config.AddMap(new InventoryNumberMap());
-            });
-
         internal InventoryNumbersRepository(string connectionString) : base(connectionString)
         {
         }

@@ -12,12 +12,6 @@ namespace ElectronicLibrary.Repositories
 {
     public class ReadersRepository: BaseRepository
     {
-        static ReadersRepository()
-            => FluentMapper.Initialize(config =>
-            {
-                config.AddMap(new ReaderMap());
-            });
-
         internal ReadersRepository(string connectionString) : base(connectionString)
         {
         }

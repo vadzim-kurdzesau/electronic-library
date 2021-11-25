@@ -10,7 +10,7 @@ namespace ElectronicLibrary.Tests
 
         public CitiesRepositoryTests()
         {
-            this._libraryService = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
+            this._libraryService = TestElectronicLibrary.LibraryService;
         }
 
         [Test]

@@ -77,9 +77,9 @@
     <Build Include="dbo\Stored Procedures\dbo.sp_books_insert.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_inventory_numbers_insert.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_readers_update.sql" />
-    <Build Include="dbo\Stored Procedures\sp_readers_read_by_phone.sql" />
-    <Build Include="dbo\Stored Procedures\sp_readers_read_by_email.sql" />
-    <Build Include="dbo\Stored Procedures\sp_readers_delete.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_by_phone.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_by_email.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_delete.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />

@@ -26,21 +26,23 @@ namespace ElectronicLibrary.Repositories
         {
             using var connection = this.GetSqlConnection();
 
-            const string queryString = @"SELECT *
-                                           FROM dbo.inventory_numbers
-                                          WHERE dbo.inventory_numbers.book_id = @Id";
-
-            foreach (var inventoryNumber in connection.Query<InventoryNumber>(queryString, new { Id = bookId }))
+            const string queryString = "dbo.sp_inventory_numbers_read_by_book_id";
+            foreach (var inventoryNumber in this.InitializeAndQueryStoredProcedure(queryString, new { Id = bookId }))
             {
                 yield return inventoryNumber;
             }
         }
 
+        private IEnumerable<InventoryNumber> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)
+        {
+            using var connection = this.GetSqlConnection();
+            return connection.Query<InventoryNumber>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
+        }
+
         public void InsertInventoryNumber(InventoryNumber inventoryNumber)
         {
             const string queryString = "dbo.sp_inventory_numbers_insert";
-            using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, ProvideInventoryNumberParameters(inventoryNumber), commandType: CommandType.StoredProcedure);
+            this.InitializeAndExecuteStoredProcedure(queryString, ProvideInventoryNumberParameters(inventoryNumber));
         }
 
         private static object ProvideInventoryNumberParameters(InventoryNumber inventoryNumber)

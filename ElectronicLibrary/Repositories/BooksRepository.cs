@@ -36,31 +36,30 @@ namespace ElectronicLibrary.Repositories
         public void InsertBook(Book book)
         {
             const string queryString = "dbo.sp_books_insert";
-            using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, ProvideBookParameters(book), commandType: CommandType.StoredProcedure);
+            this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParameters(book));
         }
 
         public IEnumerable<Book> FindBooksByName(string name)
         {
-            const string queryString = @"SELECT *
-                                           FROM dbo.books 
-                                          WHERE dbo.books.name = @Name;";
+            const string queryString = "dbo.sp_books_read_by_name";
 
-            using var connection = this.GetSqlConnection();
-            foreach (var book in connection.Query<Book>(queryString, new { Name = name }))
+            foreach (var book in this.InitializeAndQueryStoredProcedure(queryString, new { Name = name }))
             {
                 yield return book;
             }
         }
 
+        private IEnumerable<Book> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)
+        {
+            using var connection = this.GetSqlConnection();
+            return connection.Query<Book>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
+        }
+
         public IEnumerable<Book> FindBooksByAuthor(string author)
         {
-            const string queryString = @"SELECT *
-                                           FROM dbo.books 
-                                          WHERE dbo.books.author = @Author;";
+            const string queryString = "dbo.sp_books_read_by_author";
 
-            using var connection = this.GetSqlConnection();
-            foreach (var book in connection.Query<Book>(queryString, new { Author = author }))
+            foreach (var book in this.InitializeAndQueryStoredProcedure(queryString, new { Author = author }))
             {
                 yield return book;
             }
@@ -74,16 +73,9 @@ namespace ElectronicLibrary.Repositories
 
         public void UpdateBook(Book book)
         {
-            const string queryString = @"UPDATE dbo.books 
-                                            SET 
-                                                name             = @Name, 
-                                                author           = @Author,
-                                                publication_date = @PublicationDate
-                                          WHERE 
-                                                id = @Id";
+            const string queryString = "dbo.sp_books_update";
 
-            using var connection = this.GetSqlConnection();
-            connection.Execute(queryString, ProvideBookParametersWithId(book));
+            this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParametersWithId(book));
         }
 
         private static object ProvideBookParameters(Book book)

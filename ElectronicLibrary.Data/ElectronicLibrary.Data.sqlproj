@@ -80,6 +80,10 @@
     <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_by_phone.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_by_email.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_readers_delete.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_inventory_numbers_read_by_book_id.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_books_read_by_name.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_books_read_by_author.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_books_update.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />

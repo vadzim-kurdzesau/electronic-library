@@ -95,12 +95,6 @@ namespace ElectronicLibrary.Repositories
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideReaderParametersWithId(reader));
         }
 
-        private void InitializeAndExecuteStoredProcedure(string procedureName, object procedureParameters)
-        {
-            using var connection = this.GetSqlConnection();
-            connection.Execute(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
-        }
-
         private static void ValidateReader(Reader reader)
         {
             if (reader is null)

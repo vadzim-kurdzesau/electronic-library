@@ -2,8 +2,6 @@
 using System.Data;
 using Dapper;
 using Dapper.Contrib.Extensions;
-using Dapper.FluentMap;
-using ElectronicLibrary.EntityMaps;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories

@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Linq;
 using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests
@@ -17,7 +18,7 @@ namespace ElectronicLibrary.Tests
         public void CitiesRepositoryTests_FillCities()
         {
             var expected = this.GetNumberOfEntriesInCitiesTable();
-            Assert.AreEqual(expected, _libraryService.CitiesRepository.Cities.Count);
+            Assert.AreEqual(expected, _libraryService.Cities.Count());
         }
 
         private int GetNumberOfEntriesInCitiesTable()

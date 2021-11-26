@@ -14,7 +14,7 @@ namespace ElectronicLibrary.Repositories
             this.FillCities();
         }
 
-        public ICollection<City> Cities
+        public IEnumerable<City> Cities
         {
             get
             {

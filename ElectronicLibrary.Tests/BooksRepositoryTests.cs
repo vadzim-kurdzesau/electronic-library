@@ -11,12 +11,12 @@ namespace ElectronicLibrary.Tests
     [TestFixture]
     public class BooksRepositoryTests
     {
-        private readonly ElectronicLibraryService library;
+        private readonly ElectronicLibraryService _library;
 
         public BooksRepositoryTests()
         {
             ReseedReadersIdentifiers(ConfigurationManager.ConnectionString);
-            this.library = TestElectronicLibrary.LibraryService;
+            this._library = TestElectronicLibrary.LibraryService;
         }
 
         private static void ReseedReadersIdentifiers(string connectionString)
@@ -31,7 +31,7 @@ namespace ElectronicLibrary.Tests
         [TestCaseSource(typeof(Books), nameof(Books.GetList))]
         public void BooksRepositoryTests_InsertBook(Book book)
         {
-            this.library.BooksRepository.Insert(book);
+            this._library.InsertBook(book);
             Assert.Pass();
         }
 
@@ -41,7 +41,7 @@ namespace ElectronicLibrary.Tests
         {
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.library.InventoryNumbersRepository.Insert(new InventoryNumber()
+                this._library.InsertInventoryNumber(new InventoryNumber()
                 {
                     Id = i,
                     BookId = i,
@@ -59,7 +59,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.GetByName(expected.Name).FirstOrDefault();
+                var actual = this._library.GetBookByName(expected.Name).FirstOrDefault();
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -72,7 +72,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.GetByAuthor(expected.Author).FirstOrDefault();
+                var actual = this._library.GetBookByAuthor(expected.Author).FirstOrDefault();
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -85,7 +85,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.Get(expected.Id);
+                var actual = this._library.GetBook(expected.Id);
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -98,7 +98,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.InventoryNumbersRepository.Get(expected).First();
+                var actual = this._library.GetInventoryNumber(expected).First();
 
                 Assert.AreEqual(expected.Id, actual.BookId);
             }
@@ -110,7 +110,7 @@ namespace ElectronicLibrary.Tests
         {
             int index = 0;
             var expected = GetExpectedBooks().ToArray();
-            foreach (var actual in this.library.BooksRepository.GetAll())
+            foreach (var actual in this._library.GetAllBooks())
             {
                 Assert.IsTrue(new BookComparator().Equals(expected[index], actual));
                 index++;
@@ -124,8 +124,8 @@ namespace ElectronicLibrary.Tests
             var expected = Books.GetList().First().Arguments[0] as Book;
             expected.Author = "Jane Austen";
 
-            this.library.BooksRepository.Update(expected);
-            Assert.IsTrue(new BookComparator().Equals(expected, this.library.BooksRepository.GetByAuthor(expected.Author).First()));
+            this._library.UpdateBook(expected);
+            Assert.IsTrue(new BookComparator().Equals(expected, this._library.GetBookByAuthor(expected.Author).First()));
         }
 
         [Order(4)]
@@ -134,10 +134,10 @@ namespace ElectronicLibrary.Tests
         {
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.library.BooksRepository.Delete(i);
+                this._library.DeleteBook(i);
             }
 
-            Assert.IsEmpty(library.BooksRepository.GetAll());
+            Assert.IsEmpty(_library.GetAllBooks());
         }
 
         private static IEnumerable<Book> GetExpectedBooks()

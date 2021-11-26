@@ -24,6 +24,8 @@ namespace ElectronicLibrary
             var fluentMapInitializer = new FluentMapInitializer();
         }
 
+        public IEnumerable<City> Cities => this._citiesRepository.Cities;
+
         public IEnumerable<Reader> GetAllReaders()
             => this._readersRepository.GetAll();
 
@@ -48,10 +50,34 @@ namespace ElectronicLibrary
         public void DeleteReader(int id)
             => this._readersRepository.Delete(id);
 
-        public BooksRepository BooksRepository => this._booksRepository;
+        public IEnumerable<Book> GetAllBooks()
+            => this._booksRepository.GetAll();
 
-        public CitiesRepository CitiesRepository => this._citiesRepository;
+        public Book GetBook(int id)
+            => this._booksRepository.Get(id);
 
-        public InventoryNumbersRepository InventoryNumbersRepository => this._inventoryNumbersRepository;
+        public void InsertBook(Book book)
+            => this._booksRepository.Insert(book);
+
+        public IEnumerable<Book> GetBookByName(string name)
+            => this._booksRepository.GetByName(name);
+
+        public IEnumerable<Book> GetBookByAuthor(string author)
+            => this._booksRepository.GetByAuthor(author);
+
+        public void DeleteBook(int id)
+            => this._booksRepository.Delete(id);
+
+        public void UpdateBook(Book book)
+            => this._booksRepository.Update(book);
+
+        public IEnumerable<InventoryNumber> GetInventoryNumber(Book book)
+            => this._inventoryNumbersRepository.Get(book.Id);
+
+        public IEnumerable<InventoryNumber> GetInventoryNumber(int bookId)
+            => this._inventoryNumbersRepository.Get(bookId);
+
+        public void InsertInventoryNumber(InventoryNumber inventoryNumber)
+            => this._inventoryNumbersRepository.Insert(inventoryNumber);
     }
 }

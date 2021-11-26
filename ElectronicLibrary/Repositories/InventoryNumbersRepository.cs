@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using Dapper;
-using Dapper.FluentMap;
-using ElectronicLibrary.EntityMaps;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
@@ -13,10 +11,10 @@ namespace ElectronicLibrary.Repositories
         {
         }
 
-        public IEnumerable<InventoryNumber> GetInventoryNumbers(Book book)
-            => this.GetInventoryNumbers(book.Id);
+        public IEnumerable<InventoryNumber> Get(Book book)
+            => this.Get(book.Id);
 
-        public IEnumerable<InventoryNumber> GetInventoryNumbers(int bookId)
+        public IEnumerable<InventoryNumber> Get(int bookId)
         {
             using var connection = this.GetSqlConnection();
 
@@ -33,7 +31,7 @@ namespace ElectronicLibrary.Repositories
             return connection.Query<InventoryNumber>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
         }
 
-        public void InsertInventoryNumber(InventoryNumber inventoryNumber)
+        public void Insert(InventoryNumber inventoryNumber)
         {
             const string queryString = "dbo.sp_inventory_numbers_insert";
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideInventoryNumberParameters(inventoryNumber));

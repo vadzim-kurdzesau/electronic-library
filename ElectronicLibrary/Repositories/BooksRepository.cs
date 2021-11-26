@@ -15,25 +15,25 @@ namespace ElectronicLibrary.Repositories
         {
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        public IEnumerable<Book> GetAll()
         {
             using var connection = this.GetSqlConnection();
             return connection.GetAll<Book>();
         }
 
-        public Book GetBook(int id)
+        public Book Get(int id)
         {
             using var connection = this.GetSqlConnection();
             return connection.Get<Book>(id);
         }
 
-        public void InsertBook(Book book)
+        public void Insert(Book book)
         {
             const string queryString = "dbo.sp_books_insert";
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParameters(book));
         }
 
-        public IEnumerable<Book> FindBooksByName(string name)
+        public IEnumerable<Book> GetByName(string name)
         {
             const string queryString = "dbo.sp_books_read_by_name";
 
@@ -49,7 +49,7 @@ namespace ElectronicLibrary.Repositories
             return connection.Query<Book>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
         }
 
-        public IEnumerable<Book> FindBooksByAuthor(string author)
+        public IEnumerable<Book> GetByAuthor(string author)
         {
             const string queryString = "dbo.sp_books_read_by_author";
 
@@ -59,13 +59,13 @@ namespace ElectronicLibrary.Repositories
             }
         }
 
-        public void DeleteBook(int id)
+        public void Delete(int id)
         {
             using var connection = this.GetSqlConnection();
             connection.Delete(new Book() {Id = id});
         }
 
-        public void UpdateBook(Book book)
+        public void Update(Book book)
         {
             const string queryString = "dbo.sp_books_update";
 

@@ -31,7 +31,7 @@ namespace ElectronicLibrary.Tests
         [TestCaseSource(typeof(Books), nameof(Books.GetList))]
         public void BooksRepositoryTests_InsertBook(Book book)
         {
-            this.library.BooksRepository.InsertBook(book);
+            this.library.BooksRepository.Insert(book);
             Assert.Pass();
         }
 
@@ -41,7 +41,7 @@ namespace ElectronicLibrary.Tests
         {
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.library.InventoryNumbersRepository.InsertInventoryNumber(new InventoryNumber()
+                this.library.InventoryNumbersRepository.Insert(new InventoryNumber()
                 {
                     Id = i,
                     BookId = i,
@@ -59,7 +59,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.FindBooksByName(expected.Name).FirstOrDefault();
+                var actual = this.library.BooksRepository.GetByName(expected.Name).FirstOrDefault();
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -72,7 +72,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.FindBooksByAuthor(expected.Author).FirstOrDefault();
+                var actual = this.library.BooksRepository.GetByAuthor(expected.Author).FirstOrDefault();
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -85,7 +85,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.BooksRepository.GetBook(expected.Id);
+                var actual = this.library.BooksRepository.Get(expected.Id);
 
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
@@ -98,7 +98,7 @@ namespace ElectronicLibrary.Tests
             foreach (var testData in Books.GetList())
             {
                 var expected = testData.Arguments[0] as Book;
-                var actual = this.library.InventoryNumbersRepository.GetInventoryNumbers(expected).First();
+                var actual = this.library.InventoryNumbersRepository.Get(expected).First();
 
                 Assert.AreEqual(expected.Id, actual.BookId);
             }
@@ -110,7 +110,7 @@ namespace ElectronicLibrary.Tests
         {
             int index = 0;
             var expected = GetExpectedBooks().ToArray();
-            foreach (var actual in this.library.BooksRepository.GetAllBooks())
+            foreach (var actual in this.library.BooksRepository.GetAll())
             {
                 Assert.IsTrue(new BookComparator().Equals(expected[index], actual));
                 index++;
@@ -124,8 +124,8 @@ namespace ElectronicLibrary.Tests
             var expected = Books.GetList().First().Arguments[0] as Book;
             expected.Author = "Jane Austen";
 
-            this.library.BooksRepository.UpdateBook(expected);
-            Assert.IsTrue(new BookComparator().Equals(expected, this.library.BooksRepository.FindBooksByAuthor(expected.Author).First()));
+            this.library.BooksRepository.Update(expected);
+            Assert.IsTrue(new BookComparator().Equals(expected, this.library.BooksRepository.GetByAuthor(expected.Author).First()));
         }
 
         [Order(4)]
@@ -134,10 +134,10 @@ namespace ElectronicLibrary.Tests
         {
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.library.BooksRepository.DeleteBook(i);
+                this.library.BooksRepository.Delete(i);
             }
 
-            Assert.IsEmpty(library.BooksRepository.GetAllBooks());
+            Assert.IsEmpty(library.BooksRepository.GetAll());
         }
 
         private static IEnumerable<Book> GetExpectedBooks()

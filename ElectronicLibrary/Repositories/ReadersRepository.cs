@@ -16,20 +16,20 @@ namespace ElectronicLibrary.Repositories
         {
         }
 
-        public IEnumerable<Reader> GetAllReaders()
+        public IEnumerable<Reader> GetAll()
         {
             using var connection = this.GetSqlConnection();
             return connection.GetAll<Reader>();
         }
 
-        public Reader GetReader(int id)
+        public Reader Get(int id)
         {
             ValidateId(id);
             using var connection = this.GetSqlConnection();
             return connection.Get<Reader>(id);
         }
 
-        public IEnumerable<Reader> FindReadersByName(string firstName, string lastName)
+        public IEnumerable<Reader> GetByName(string firstName, string lastName)
         {
             ValidateName(firstName, lastName);
 
@@ -43,7 +43,7 @@ namespace ElectronicLibrary.Repositories
             ValidateString(lastName);
         }
 
-        public Reader FindReaderByPhone(string phone)
+        public Reader GetByPhone(string phone)
         {
             ValidateString(phone);
 
@@ -60,7 +60,7 @@ namespace ElectronicLibrary.Repositories
             }
         }
 
-        public Reader FindReaderByEmail(string email)
+        public Reader GetByEmail(string email)
         {
             ValidateString(email);
 
@@ -75,13 +75,13 @@ namespace ElectronicLibrary.Repositories
             return connection.Query<Reader>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
         }
 
-        public void InsertReader(Reader reader)
+        public void Insert(Reader reader)
         {
             const string queryString = "dbo.sp_readers_insert";
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideReaderParameters(reader));
         }
 
-        public void UpdateReader(Reader reader)
+        public void Update(Reader reader)
         {
             ValidateReader(reader);
 
@@ -97,7 +97,7 @@ namespace ElectronicLibrary.Repositories
             }
         }
 
-        public void DeleteReader(int id)
+        public void Delete(int id)
         {
             ValidateId(id);
 

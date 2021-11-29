@@ -10,7 +10,6 @@ BEGIN
 		author, 
 		publication_date
 	)
-
 	VALUES (
 		@Name,
 		@Author,

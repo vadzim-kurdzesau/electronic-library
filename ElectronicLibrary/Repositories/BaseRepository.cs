@@ -5,7 +5,7 @@ using Dapper;
 
 namespace ElectronicLibrary.Repositories
 {
-    public class BaseRepository
+    internal class BaseRepository
     {
         private readonly string _connectionString;
 

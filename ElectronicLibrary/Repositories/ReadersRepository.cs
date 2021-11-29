@@ -8,7 +8,7 @@ using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
 {
-    public class ReadersRepository: BaseRepository
+    internal sealed class ReadersRepository: BaseRepository
     {
         internal ReadersRepository(string connectionString) : base(connectionString)
         {
@@ -100,11 +100,11 @@ namespace ElectronicLibrary.Repositories
             ValidateId(id);
 
             const string queryString = "dbo.sp_readers_delete";
-            this.InitializeAndExecuteStoredProcedure(queryString, new { Id = id });
+            this.InitializeAndExecuteStoredProcedure(queryString, new DynamicParameters( new { Id = id }));
         }
 
-        private static object ProvideReaderParameters(Reader reader)
-            => new
+        private static DynamicParameters ProvideReaderParameters(Reader reader)
+            => new DynamicParameters( new 
             {
                 FirstName = reader.FirstName,
                 LastName = reader.LastName,
@@ -113,19 +113,13 @@ namespace ElectronicLibrary.Repositories
                 CityId = reader.CityId,
                 Address = reader.Address,
                 Zip = reader.Zip
-            };
+            });
 
-        private static object ProvideReaderParametersWithId(Reader reader)
-            => new
-            {
-                Id = reader.Id,
-                FirstName = reader.FirstName,
-                LastName = reader.LastName,
-                Email = reader.Email,
-                Phone = reader.Phone,
-                CityId = reader.CityId,
-                Address = reader.Address,
-                Zip = reader.Zip
-            };
+        private static DynamicParameters ProvideReaderParametersWithId(Reader reader)
+        {
+            var parameters = ProvideReaderParameters(reader);
+            parameters.Add("Id", reader.Id, DbType.Int32);
+            return parameters;
+        }
     }
 }

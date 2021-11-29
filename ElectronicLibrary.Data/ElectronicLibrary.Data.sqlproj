@@ -84,6 +84,9 @@
     <Build Include="dbo\Stored Procedures\dbo.sp_books_read_by_name.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_books_read_by_author.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_books_update.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_inventory_numbers_read_not_borrowed.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_borrow_history_insert.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_borrow_history_update_by_inventory_number.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />

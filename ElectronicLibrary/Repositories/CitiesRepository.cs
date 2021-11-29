@@ -4,7 +4,7 @@ using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
 {
-    public class CitiesRepository : BaseRepository
+    internal sealed class CitiesRepository : BaseRepository
     {
         private readonly List<City> _cities;
 

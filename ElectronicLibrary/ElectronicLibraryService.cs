@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ElectronicLibrary.EntityMaps;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Repositories;
@@ -24,7 +21,7 @@ namespace ElectronicLibrary
             var fluentMapInitializer = new FluentMapInitializer();
         }
 
-        public IEnumerable<City> Cities => this._citiesRepository.Cities;
+        public IEnumerable<City> GetAllCities => this._citiesRepository.Cities;
 
         public IEnumerable<Reader> GetAllReaders()
             => this._readersRepository.GetAll();
@@ -79,5 +76,11 @@ namespace ElectronicLibrary
 
         public void InsertInventoryNumber(InventoryNumber inventoryNumber)
             => this._inventoryNumbersRepository.Insert(inventoryNumber);
+
+        public void TakeBook(Book book, Reader reader)
+            => this._inventoryNumbersRepository.TakeBook(book, reader);
+
+        public void ReturnBook(InventoryNumber inventoryNumber)
+            => this._inventoryNumbersRepository.ReturnBook(inventoryNumber);
     }
 }

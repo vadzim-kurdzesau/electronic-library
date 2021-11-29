@@ -18,7 +18,7 @@ namespace ElectronicLibrary.Tests
         public void CitiesRepositoryTests_FillCities()
         {
             var expected = this.GetNumberOfEntriesInCitiesTable();
-            Assert.AreEqual(expected, _libraryService.Cities.Count());
+            Assert.AreEqual(expected, _libraryService.GetAllCities.Count());
         }
 
         private int GetNumberOfEntriesInCitiesTable()

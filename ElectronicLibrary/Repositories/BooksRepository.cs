@@ -6,7 +6,7 @@ using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
 {
-    public class BooksRepository : BaseRepository
+    internal sealed class BooksRepository : BaseRepository
     {
         internal BooksRepository(string connectionString)
             : base(connectionString)
@@ -70,21 +70,20 @@ namespace ElectronicLibrary.Repositories
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParametersWithId(book));
         }
 
-        private static object ProvideBookParameters(Book book)
-            => new
+        private static DynamicParameters ProvideBookParameters(Book book)
+            => new DynamicParameters(new
             {
                 Name = book.Name,
                 Author = book.Author,
                 PublicationDate = book.PublicationDate
-            };
+            });
 
-        private static object ProvideBookParametersWithId(Book book)
-            => new
-            {
-                Id = book.Id,
-                Name = book.Name,
-                Author = book.Author,
-                PublicationDate = book.PublicationDate
-            };
+
+        private static DynamicParameters ProvideBookParametersWithId(Book book)
+        {
+            var parameters = ProvideBookParameters(book);
+            parameters.Add("Id", book.Id, DbType.Int32);
+            return parameters;
+        }
     }
 }

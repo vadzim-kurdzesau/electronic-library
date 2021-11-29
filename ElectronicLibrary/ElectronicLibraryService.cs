@@ -77,7 +77,7 @@ namespace ElectronicLibrary
         public void InsertInventoryNumber(InventoryNumber inventoryNumber)
             => this._inventoryNumbersRepository.Insert(inventoryNumber);
 
-        public void TakeBook(Book book, Reader reader)
+        public InventoryNumber TakeBook(Book book, Reader reader)
             => this._inventoryNumbersRepository.TakeBook(book, reader);
 
         public void ReturnBook(InventoryNumber inventoryNumber)

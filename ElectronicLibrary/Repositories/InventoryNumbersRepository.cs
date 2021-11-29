@@ -27,7 +27,7 @@ namespace ElectronicLibrary.Repositories
             }
         }
 
-        public void TakeBook(Book book, Reader reader)
+        public InventoryNumber TakeBook(Book book, Reader reader)
         {
             using var connection = this.GetSqlConnection();
             var inventoryNumber = this.InitializeAndQueryStoredProcedure("dbo.sp_inventory_numbers_read_not_borrowed", new {Id = book.Id})
@@ -41,6 +41,8 @@ namespace ElectronicLibrary.Repositories
                     InventoryNumberId = inventoryNumber.Id,
                     BorrowDate = DateTime.Now
                 });
+
+            return inventoryNumber;
         }
 
         public void ReturnBook(InventoryNumber inventoryNumber)

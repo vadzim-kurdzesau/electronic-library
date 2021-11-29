@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[sp_inventory_numbers_read_not_borrowed]
-    @Id INT
+    @Id AS INT
 AS
 BEGIN
 	  SELECT i.*

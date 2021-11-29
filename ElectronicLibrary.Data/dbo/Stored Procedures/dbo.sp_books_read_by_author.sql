@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[sp_books_read_by_author]
-	@Author NVARCHAR(200)
+	@Author AS NVARCHAR(200)
 AS
 BEGIN
 	SELECT *

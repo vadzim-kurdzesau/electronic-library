@@ -3,11 +3,9 @@
 AS
 BEGIN
 	  SELECT i.*
-        FROM dbo.inventory_numbers 
-		  AS i
-   LEFT JOIN dbo.borrow_history 
-		  AS b
+        FROM dbo.inventory_numbers AS i
+   LEFT JOIN dbo.borrow_history	   AS b
 		  ON number = b.inventory_number_id
 	   WHERE i.book_id = @Id 
-		 AND b.return_date IS NULL;
+		 AND b.borrow_date IS NULL;
 END

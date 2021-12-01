@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ElectronicLibrary.EntityMaps;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Repositories;
@@ -11,6 +13,12 @@ namespace ElectronicLibrary
         private readonly CitiesRepository _citiesRepository;
         private readonly BooksRepository _booksRepository;
         private readonly InventoryNumbersRepository _inventoryNumbersRepository;
+        private readonly BorrowHistoryRepository _borrowHistoryRepository;
+
+        static ElectronicLibraryService()
+        {
+            var fluentMapInitializer = new FluentMapInitializer();
+        }
 
         public ElectronicLibraryService(string connectionString)
         {
@@ -18,7 +26,7 @@ namespace ElectronicLibrary
             this._citiesRepository = new CitiesRepository(connectionString);
             this._booksRepository = new BooksRepository(connectionString);
             this._inventoryNumbersRepository = new InventoryNumbersRepository(connectionString);
-            var fluentMapInitializer = new FluentMapInitializer();
+            this._borrowHistoryRepository = new BorrowHistoryRepository(connectionString);
         }
 
         public IEnumerable<City> GetAllCities => this._citiesRepository.Cities;
@@ -68,19 +76,26 @@ namespace ElectronicLibrary
         public void UpdateBook(Book book)
             => this._booksRepository.Update(book);
 
-        public IEnumerable<InventoryNumber> GetInventoryNumber(Book book)
+        public IEnumerable<InventoryNumber> GetInventoryNumbers(Book book)
             => this._inventoryNumbersRepository.Get(book.Id);
 
-        public IEnumerable<InventoryNumber> GetInventoryNumber(int bookId)
+        public IEnumerable<InventoryNumber> GetInventoryNumbers(int bookId)
             => this._inventoryNumbersRepository.Get(bookId);
 
         public void InsertInventoryNumber(InventoryNumber inventoryNumber)
             => this._inventoryNumbersRepository.Insert(inventoryNumber);
 
         public InventoryNumber TakeBook(Book book, Reader reader)
-            => this._inventoryNumbersRepository.TakeBook(book, reader);
+        {
+            var inventoryNumber = this._inventoryNumbersRepository.GetNotBorrowed(book)
+                                      .FirstOrDefault()
+                                  ?? throw new ArgumentException("There are no copies of this book right now.");
 
-        public void ReturnBook(InventoryNumber inventoryNumber)
-            => this._inventoryNumbersRepository.ReturnBook(inventoryNumber);
+            this._borrowHistoryRepository.Insert(reader, inventoryNumber);
+            return inventoryNumber;
+        }
+
+        public void ReturnBook(Reader reader, InventoryNumber inventoryNumber)
+            => this._borrowHistoryRepository.Update(reader, inventoryNumber);
     }
 }

@@ -1,122 +1,145 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Tests.Comparators;
+using ElectronicLibrary.Tests.Extensions;
 using ElectronicLibrary.Tests.TestData;
 using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests
 {
     [TestFixture]
-    public class ReadersRepositoryTests
+    public class ReadersRepositoryTests : BaseTestElectronicLibrary
     {
-        private readonly ElectronicLibraryService _libraryService;
-
-        public ReadersRepositoryTests()
-        {
-            ReseedReadersIdentifiers(ConfigurationManager.ConnectionString);
-            this._libraryService = TestElectronicLibrary.LibraryService;
-        }
-
-        private static void ReseedReadersIdentifiers(string connectionString)
-        {
-            using SqlConnection sqlConnection = new SqlConnection(connectionString);
-            sqlConnection.Open();
-
-            new SqlCommand("DBCC CHECKIDENT ('ElectronicLibrary.dbo.readers', RESEED, 0);", sqlConnection).ExecuteNonQuery();
-        }
-
-        [Order(0)]
-        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_InsertReader(Reader reader)
-        {
-            this._libraryService.InsertReader(reader);
-            Assert.Pass();
-        }
-
-        [Order(1)]
         [Test]
-        public void ReaderRepositoryTests_GetReader()
+        public void ReadersRepositoryTests_InsertReader()
         {
-            foreach (var testData in Readers.GetList())
+            foreach (var reader in Readers.GetList().ExtractData<Reader>())
             {
-                var expected = (Reader) testData.Arguments[0];
-                var actual = this._libraryService.GetReader(expected.Id);
+                // Act
+                this.Library.InsertReader(reader);
+                var actual = GetElementFromTable<Reader>(reader.Id);
 
+                // Assert
+                Assert.IsTrue(new ReaderComparator().Equals(reader, actual));
+            }
+        }
+
+        [Test]
+        public void ReadersRepositoryTests_GetReader()
+        {
+            foreach (var expected in Readers.GetList().ExtractData<Reader>())
+            {
+                // Arrange
+                this.Library.InsertReader(expected);
+
+                // Act
+                var actual = this.Library.GetReader(expected.Id);
+
+                // Assert
                 Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
             }
         }
 
-        [Order(2)]
-        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReadersByName(Reader expected)
-        {
-            var actual = this._libraryService.GetReaderByName(expected.FirstName, expected.LastName).First();
-            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
-        }
-
-        [Order(2)]
-        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReaderByPhone(Reader expected)
-        {
-            var actual = this._libraryService.GetReaderByPhone(expected.Phone);
-            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
-        }
-
-        [Order(2)]
-        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReaderRepositoryTests_FindReaderByEmail(Reader expected)
-        {
-            var actual = this._libraryService.GetReaderByEmail(expected.Email);
-            Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
-        }
-
-        [Order(2)]
         [Test]
-        public void ReaderRepositoryTests_GetAllReaders()
+        public void ReadersRepositoryTests_GetReadersByName()
         {
+            // Arrange
+            foreach (var expected in Readers.GetList().ExtractData<Reader>())
+            {
+                this.Library.InsertReader(expected);
+
+                // Act
+                var actual = this.Library.GetReaderByName(expected.FirstName, expected.LastName).First();
+
+                // Assert
+                Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
+            }
+        }
+
+        [Test]
+        public void ReadersRepositoryTests_GetReaderByPhone()
+        {
+            // Arrange
+            foreach (var expected in Readers.GetList().ExtractData<Reader>())
+            {
+                this.Library.InsertReader(expected);
+
+                // Act
+                var actual = this.Library.GetReaderByPhone(expected.Phone);
+
+                // Assert
+                Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
+            }
+        }
+
+        [Test]
+        public void ReadersRepositoryTests_GetReaderByEmail()
+        {
+            // Arrange
+            foreach (var expected in Readers.GetList().ExtractData<Reader>())
+            {
+                this.Library.InsertReader(expected);
+
+                // Act
+                var actual = this.Library.GetReaderByEmail(expected.Email);
+
+                // Assert
+                Assert.IsTrue(new ReaderComparator().Equals(expected, actual));
+            }
+        }
+
+        [Test]
+        public void ReadersRepositoryTests_GetAllReaders()
+        {
+            // Arrange
+            foreach (var reader in Readers.GetList().ExtractData<Reader>())
+            {
+                this.Library.InsertReader(reader);
+            }
+
             int index = 0;
-            var expected = GetExpectedReaders().ToArray();
-            foreach (var actual in this._libraryService.GetAllReaders())
+            var expected = Readers.GetList().ExtractData<Reader>().ToArray();
+
+            // Act
+            foreach (var actual in this.Library.GetAllReaders())
             {
-                Assert.IsTrue(new ReaderComparator().Equals(expected[index], actual));
-                index++;
+                // Assert
+                Assert.IsTrue(new ReaderComparator().Equals(expected[index++], actual));
             }
         }
 
-        [Order(3)]
         [Test]
-        public void ReaderRepositoryTests_UpdateReader()
+        public void ReadersRepositoryTests_UpdateReader()
         {
-            var expected = Readers.GetList().First().Arguments[0] as Reader;
-            expected.FirstName = "Vadim";
+            // Arrange
+            var expected = Readers.GetList().ExtractData<Reader>().First();
+            this.Library.InsertReader(expected);
+            expected.FirstName = "Test";
 
-            this._libraryService.UpdateReader(expected);
-            Assert.IsTrue(new ReaderComparator().Equals(expected, this._libraryService.GetReader(expected.Id)));
+            // Act
+            this.Library.UpdateReader(expected);
+
+            // Assert
+            Assert.IsTrue(new ReaderComparator().Equals(expected, this.Library.GetReader(expected.Id)));
         }
 
-        [Order(4)]
-        [Test]
-        public void ReaderRepositoryTests_DeleteReaders()
+        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
+        public void ReadersRepositoryTests_DeleteReaders(Reader reader)
         {
-            for (int i = 1; i <= Readers.GetList().Count(); i++)
-            {
-                this._libraryService.DeleteReader(i);
-            }
+            // Arrange
+            this.Library.InsertReader(reader);
 
-            Assert.IsEmpty(_libraryService.GetAllReaders());
+            // Act
+            this.Library.DeleteReader(reader.Id);
+
+            // Assert
+            Assert.IsNull(GetElementFromTable<Reader>(reader.Id));
         }
 
-        private static IEnumerable<Reader> GetExpectedReaders()
-        {
-            List<Reader> expected = new List<Reader>();
-            foreach (var testData in Readers.GetList().ToArray())
-            {
-                expected.Add(testData.Arguments[0] as Reader);
-            }
+        protected override void ClearTable()
+            => this.ClearTable("readers");
 
-            return expected;
-        }
+        public override void SetUp()
+            => ReseedTableIdentifiers("readers");
     }
 }

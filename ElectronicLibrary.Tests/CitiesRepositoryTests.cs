@@ -7,18 +7,18 @@ namespace ElectronicLibrary.Tests
     [TestFixture]
     public class CitiesRepositoryTests
     {
-        private readonly ElectronicLibraryService _libraryService;
+        private readonly ElectronicLibraryService _library;
 
         public CitiesRepositoryTests()
         {
-            this._libraryService = TestElectronicLibrary.LibraryService;
+            this._library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
         [Test]
         public void CitiesRepositoryTests_FillCities()
         {
             var expected = this.GetNumberOfEntriesInCitiesTable();
-            Assert.AreEqual(expected, _libraryService.GetAllCities.Count());
+            Assert.AreEqual(expected, _library.GetAllCities.Count());
         }
 
         private int GetNumberOfEntriesInCitiesTable()
@@ -27,10 +27,12 @@ namespace ElectronicLibrary.Tests
 
             using var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionString);
             sqlConnection.Open();
+
             var command = new SqlCommand(queryString, sqlConnection);
             var reader = command.ExecuteReader();
             reader.Read();
-            return (int) reader[0];
+
+            return (int)reader[0];
         }
     }
 }

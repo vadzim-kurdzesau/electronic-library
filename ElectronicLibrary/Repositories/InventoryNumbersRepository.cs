@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using Dapper;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
 {
-    internal sealed class InventoryNumbersRepository: BaseRepository
+    internal sealed class InventoryNumbersRepository : BaseRepository
     {
         internal InventoryNumbersRepository(string connectionString) : base(connectionString)
         {
@@ -26,33 +24,12 @@ namespace ElectronicLibrary.Repositories
                 yield return inventoryNumber;
             }
         }
-
-        public InventoryNumber TakeBook(Book book, Reader reader)
+        public IEnumerable<InventoryNumber> GetNotBorrowed(Book book)
         {
             using var connection = this.GetSqlConnection();
-            var inventoryNumber = this.InitializeAndQueryStoredProcedure("dbo.sp_inventory_numbers_read_not_borrowed", new {Id = book.Id})
-                                      .FirstOrDefault() 
-                                        ?? throw new ArgumentException("There are no copies of this book right now.");
 
-            this.InitializeAndExecuteStoredProcedure("dbo.sp_borrow_history_insert",
-                new
-                {
-                    ReaderId = reader.Id,
-                    InventoryNumberId = inventoryNumber.Id,
-                    BorrowDate = DateTime.Now
-                });
-
-            return inventoryNumber;
-        }
-
-        public void ReturnBook(InventoryNumber inventoryNumber)
-        {
-            using var connection = this.GetSqlConnection();
-            this.InitializeAndExecuteStoredProcedure("dbo.sp_borrow_history_update_by_inventory_number", new DynamicParameters(new
-            {
-                InventoryNumberId = inventoryNumber.Id,
-                ReturnDate = DateTime.Now
-            }));
+            const string queryString = "dbo.sp_inventory_numbers_read_not_borrowed";
+            return this.InitializeAndQueryStoredProcedure(queryString, new { Id = book.Id });
         }
 
         private IEnumerable<InventoryNumber> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)

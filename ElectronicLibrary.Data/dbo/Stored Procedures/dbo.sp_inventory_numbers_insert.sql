@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[sp_inventory_numbers_insert] (
-	@BookId		AS INT,
-	@Number 	AS INT
+	@BookId	AS INT,
+	@Number	AS INT
 )
 AS
 BEGIN
@@ -8,7 +8,6 @@ BEGIN
 		book_id, 
 		number
 	)
-
 	VALUES (
 		@BookId,
 		@Number

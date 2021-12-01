@@ -1,12 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[sp_readers_update]
-    @Id         INT,
-	@FirstName  NVARCHAR(20),
-	@LastName   NVARCHAR(30),
-    @Email      VARCHAR(320),
-    @Phone      VARCHAR(20),
-    @CityId     INT,
-    @Address    NVARCHAR(100),
-    @Zip        CHAR(6)
+    @Id         AS INT,
+	@FirstName  AS NVARCHAR(20),
+	@LastName   AS NVARCHAR(30),
+    @Email      AS VARCHAR(320),
+    @Phone      AS VARCHAR(20),
+    @CityId     AS INT,
+    @Address    AS NVARCHAR(100),
+    @Zip        AS CHAR(6)
 AS
 BEGIN
     UPDATE dbo.readers

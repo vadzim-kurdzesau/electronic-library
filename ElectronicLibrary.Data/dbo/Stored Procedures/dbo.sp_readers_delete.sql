@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[sp_readers_delete]
-	@Id INT
+	@Id AS INT
 AS
 BEGIN
 	DELETE dbo.readers 

@@ -1,154 +1,141 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Linq;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Tests.TestData;
 using ElectronicLibrary.Tests.Comparators;
+using ElectronicLibrary.Tests.Extensions;
 using NUnit.Framework;
 
 namespace ElectronicLibrary.Tests
 {
     [TestFixture]
-    public class BooksRepositoryTests
+    public class BooksRepositoryTests : BaseTestElectronicLibrary
     {
-        private readonly ElectronicLibraryService _library;
+        protected override void ClearTable()
+            => this.ClearTable("books");
 
-        public BooksRepositoryTests()
-        {
-            ReseedReadersIdentifiers(ConfigurationManager.ConnectionString);
-            this._library = TestElectronicLibrary.LibraryService;
-        }
-
-        private static void ReseedReadersIdentifiers(string connectionString)
-        {
-            using SqlConnection sqlConnection = new SqlConnection(connectionString);
-            sqlConnection.Open();
-
-            new SqlCommand("DBCC CHECKIDENT ('ElectronicLibrary.dbo.books', RESEED, 0);", sqlConnection).ExecuteNonQuery();
-        }
-
-        [Order(0)]
-        [TestCaseSource(typeof(Books), nameof(Books.GetList))]
-        public void BooksRepositoryTests_InsertBook(Book book)
-        {
-            this._library.InsertBook(book);
-            Assert.Pass();
-        }
-
-        [Order(1)]
+        public override void SetUp()
+            => ReseedTableIdentifiers("books");
+        
         [Test]
-        public void BooksRepositoryTests_InsertInventoryNumber()
+        public void BooksRepositoryTests_InsertBook()
         {
-            for (int i = 1; i <= Books.GetList().Count(); i++)
+            foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this._library.InsertInventoryNumber(new InventoryNumber()
-                {
-                    Id = i,
-                    BookId = i,
-                    Number = i.ToString()
-                });
+                // Arrange
+                this.Library.InsertBook(book);
+
+                // Act
+                var actual = GetElementFromTable<Book>(book.Id);
+
+                // Assert
+                Assert.IsTrue(new BookComparator().Equals(book, actual));
             }
-
-            Assert.Pass();
         }
 
-        [Order(1)]
         [Test]
-        public void BooksRepositoryTests_FindBookByName()
+        public void BooksRepositoryTests_GetBookByName()
         {
-            foreach (var testData in Books.GetList())
+            foreach (var expected in Books.GetList().ExtractData<Book>())
             {
-                var expected = testData.Arguments[0] as Book;
-                var actual = this._library.GetBookByName(expected.Name).FirstOrDefault();
+                // Arrange
+                this.Library.InsertBook(expected);
 
+                // Act
+                var actual = this.Library.GetBookByName(expected.Name).FirstOrDefault();
+
+                // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
-        [Order(1)]
         [Test]
-        public void BooksRepositoryTests_FindBookByAuthor()
+        public void BooksRepositoryTests_GetBookByAuthor()
         {
-            foreach (var testData in Books.GetList())
+            foreach (var expected in Books.GetList().ExtractData<Book>())
             {
-                var expected = testData.Arguments[0] as Book;
-                var actual = this._library.GetBookByAuthor(expected.Author).FirstOrDefault();
+                // Arrange
+                this.Library.InsertBook(expected);
 
+                // Act
+                var actual = this.Library.GetBookByAuthor(expected.Author).FirstOrDefault();
+
+                // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
-        [Order(1)]
         [Test]
         public void BooksRepositoryTests_GetBook()
         {
-            foreach (var testData in Books.GetList())
+            foreach (var expected in Books.GetList().ExtractData<Book>())
             {
-                var expected = testData.Arguments[0] as Book;
-                var actual = this._library.GetBook(expected.Id);
+                // Arrange
+                this.Library.InsertBook(expected);
 
+                // Act
+                var actual = this.Library.GetBook(expected.Id);
+
+                // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
             }
         }
 
-        [Order(1)]
-        [Test]
-        public void BooksRepositoryTests_GetInventoryNumbers()
-        {
-            foreach (var testData in Books.GetList())
-            {
-                var expected = testData.Arguments[0] as Book;
-                var actual = this._library.GetInventoryNumber(expected).First();
-
-                Assert.AreEqual(expected.Id, actual.BookId);
-            }
-        }
-
-        [Order(2)]
         [Test]
         public void BooksRepositoryTests_GetAllBooks()
         {
-            int index = 0;
-            var expected = GetExpectedBooks().ToArray();
-            foreach (var actual in this._library.GetAllBooks())
+            // Arrange
+            foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                Assert.IsTrue(new BookComparator().Equals(expected[index], actual));
-                index++;
+                this.Library.InsertBook(book);
+            }
+
+            int index = 0;
+            var expected = Books.GetList().ExtractData<Book>().ToArray();
+
+            // Act
+            foreach (var actual in this.Library.GetAllBooks())
+            {
+                // Assert
+                Assert.IsTrue(new BookComparator().Equals(expected[index++], actual));
             }
         }
 
-        [Order(3)]
         [Test]
         public void BooksRepositoryTests_UpdateBook()
         {
-            var expected = Books.GetList().First().Arguments[0] as Book;
+            // Arrange
+            var expected = Books.GetList().ExtractData<Book>().First();
+            this.Library.InsertBook(expected);
+
             expected.Author = "Jane Austen";
 
-            this._library.UpdateBook(expected);
-            Assert.IsTrue(new BookComparator().Equals(expected, this._library.GetBookByAuthor(expected.Author).First()));
+            // Act
+            this.Library.UpdateBook(expected);
+
+            // Assert
+            Assert.IsTrue(new BookComparator().Equals(expected, this.Library.GetBookByAuthor(expected.Author).FirstOrDefault()));
         }
 
-        [Order(4)]
         [Test]
         public void BooksRepositoryTests_DeleteBook()
         {
+            // Arrange
+            foreach (var book in Books.GetList().ExtractData<Book>())
+            {
+                this.Library.InsertBook(book);
+            }
+
+            // Act
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this._library.DeleteBook(i);
+                this.Library.DeleteBook(i);
+
+                // Assert
+                Assert.IsNull(GetElementFromTable<Book>(i));
             }
 
-            Assert.IsEmpty(_library.GetAllBooks());
-        }
-
-        private static IEnumerable<Book> GetExpectedBooks()
-        {
-            List<Book> expected = new List<Book>();
-            foreach (var testData in Books.GetList().ToArray())
-            {
-                expected.Add(testData.Arguments[0] as Book);
-            }
-
-            return expected;
+            // Assert
+            Assert.IsEmpty(Library.GetAllBooks());
         }
     }
 }

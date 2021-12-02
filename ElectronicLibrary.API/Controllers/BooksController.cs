@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ElectronicLibrary.API.Fakers;
+using ElectronicLibrary.API.Parameters;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.API.Controllers
 {
-    [Route("[controller]")]
     public class BooksController : BaseController
     {
         public BooksController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)
@@ -15,9 +16,12 @@ namespace ElectronicLibrary.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllBooks()
+        public IActionResult GetAllBooks([FromQuery] PaginationParameters paginationParameters)
         {
-            var books = this._electronicLibraryService.GetAllBooks();
+            var books = this._electronicLibraryService.GetAllBooks()
+                                                                      .Skip(paginationParameters.Size * (paginationParameters.Page - 1))
+                                                                      .Take(paginationParameters.Size);
+
             return Ok(books);
         }
 

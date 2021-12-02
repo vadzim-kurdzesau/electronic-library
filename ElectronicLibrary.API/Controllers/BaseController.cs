@@ -2,6 +2,8 @@
 
 namespace ElectronicLibrary.API.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public abstract class BaseController : Controller
     {
         protected readonly ElectronicLibraryService _electronicLibraryService;

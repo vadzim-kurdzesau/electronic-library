@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.API.Controllers
 {
-    [Route("[controller]")]
     public class CitiesController : BaseController
     {
         public CitiesController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)

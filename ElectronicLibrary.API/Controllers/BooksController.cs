@@ -49,8 +49,7 @@ namespace ElectronicLibrary.API.Controllers
 
             this._electronicLibraryService.InsertBook(book);
 
-            // Do not know how to get url to return 'Created' status
-            return Ok(book);
+            return CreatedAtAction("GetBook", new { id = book.Id }, book);
         }
 
         [HttpDelete]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using ElectronicLibrary.API.Fakers;
@@ -25,8 +26,7 @@ namespace ElectronicLibrary.API.Controllers
             return Ok(books);
         }
 
-        [HttpGet]
-        [Route("{id:int}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetBook(int id)
         {
             var book = this._electronicLibraryService.GetBook(id);
@@ -52,8 +52,7 @@ namespace ElectronicLibrary.API.Controllers
             return CreatedAtAction("GetBook", new { id = book.Id }, book);
         }
 
-        [HttpDelete]
-        [Route("{id:int}")]
+        [HttpDelete("{id:int}")]
         public IActionResult DeleteBook(int id)
         {
             if (this._electronicLibraryService.DeleteBook(id))
@@ -64,12 +63,29 @@ namespace ElectronicLibrary.API.Controllers
             return NotFound();
         }
 
-        [HttpPut]
-        public IActionResult UpdateBook(Book book)
+        [HttpPut("{id:int}")]
+        public IActionResult UpdateBook(int id, Book book)
         {
-            this._electronicLibraryService.UpdateBook(book);
+            if (id != book.Id)
+            {
+                return BadRequest();
+            }
 
-            return Ok(book);
+            try
+            {
+                this._electronicLibraryService.UpdateBook(book);
+            }
+            catch (Exception)
+            {
+                if (this._electronicLibraryService.GetBook(id) is null)
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return NoContent();
         }
     }
 }

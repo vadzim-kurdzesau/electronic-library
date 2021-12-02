@@ -11,7 +11,6 @@ namespace ElectronicLibrary.Repositories
         internal CitiesRepository(string connectionString) : base(connectionString)
         {
             this._cities = new List<City>();
-            this.FillCities();
         }
 
         public IEnumerable<City> Cities

@@ -57,10 +57,10 @@ namespace ElectronicLibrary.Repositories
             }
         }
 
-        public void Delete(int id)
+        public bool Delete(int id)
         {
             using var connection = this.GetSqlConnection();
-            connection.Delete(new Book() {Id = id});
+            return connection.Delete(new Book() {Id = id});
         }
 
         public void Update(Book book)

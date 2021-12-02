@@ -11,7 +11,7 @@ namespace ElectronicLibrary.Tests
     public class BooksRepositoryTests : BaseTestElectronicLibrary
     {
         protected override void ClearTable()
-            => this.ClearTable("books");
+            => ClearTable("books");
 
         public override void SetUp()
             => ReseedTableIdentifiers("books");

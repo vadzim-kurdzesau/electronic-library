@@ -70,7 +70,7 @@ namespace ElectronicLibrary
         public IEnumerable<Book> GetBookByAuthor(string author)
             => this._booksRepository.GetByAuthor(author);
 
-        public void DeleteBook(int id)
+        public bool DeleteBook(int id)
             => this._booksRepository.Delete(id);
 
         public void UpdateBook(Book book)

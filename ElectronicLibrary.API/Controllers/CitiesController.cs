@@ -17,7 +17,6 @@ namespace ElectronicLibrary.API.Controllers
         public IActionResult GetAllCities()
         {
             var cities = this._electronicLibraryService.GetAllCities;
-
             return Ok(cities);
         }
     }

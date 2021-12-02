@@ -137,7 +137,7 @@ namespace ElectronicLibrary.Tests
         }
 
         protected override void ClearTable()
-            => this.ClearTable("readers");
+            => ClearTable("readers");
 
         public override void SetUp()
             => ReseedTableIdentifiers("readers");

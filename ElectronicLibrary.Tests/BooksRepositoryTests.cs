@@ -41,7 +41,7 @@ namespace ElectronicLibrary.Tests
                 this.Library.InsertBook(expected);
 
                 // Act
-                var actual = this.Library.GetBookByName(expected.Name).FirstOrDefault();
+                var actual = this.Library.GetBooksByName(expected.Name).FirstOrDefault();
 
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
@@ -57,7 +57,7 @@ namespace ElectronicLibrary.Tests
                 this.Library.InsertBook(expected);
 
                 // Act
-                var actual = this.Library.GetBookByAuthor(expected.Author).FirstOrDefault();
+                var actual = this.Library.GetBooksByAuthor(expected.Author).FirstOrDefault();
 
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
@@ -113,7 +113,7 @@ namespace ElectronicLibrary.Tests
             this.Library.UpdateBook(expected);
 
             // Assert
-            Assert.IsTrue(new BookComparator().Equals(expected, this.Library.GetBookByAuthor(expected.Author).FirstOrDefault()));
+            Assert.IsTrue(new BookComparator().Equals(expected, this.Library.GetBooksByAuthor(expected.Author).FirstOrDefault()));
         }
 
         [Test]

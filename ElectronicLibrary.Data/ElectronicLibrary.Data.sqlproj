@@ -88,6 +88,9 @@
     <Build Include="dbo\Stored Procedures\dbo.sp_borrow_history_insert.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_borrow_history_update.sql" />
     <Build Include="dbo\Stored Procedures\dbo.sp_borrow_history_read_by_inventory_number.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_books_read_all_paged.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_readers_read_all_paged.sql" />
+    <Build Include="dbo\Stored Procedures\dbo.sp_inventory_numbers_read_by_number.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ElectronicLibrary.Data.refactorlog" />

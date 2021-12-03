@@ -20,6 +20,17 @@ namespace ElectronicLibrary.Repositories
             return connection.GetAll<Reader>();
         }
 
+        public IEnumerable<Reader> GetAll(int page, int size)
+        {
+            if (page <= 0 || size < 0)
+            {
+                throw new ArgumentException("Invalid size or page argument.");
+            }
+
+            const string queryString = "dbo.sp_readers_read_all_paged";
+            return this.InitializeAndQueryStoredProcedure(queryString, new { Page = page, Size = size });
+        }
+
         public Reader Get(int id)
         {
             ValidateId(id);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ElectronicLibrary.API.Parameters;
+using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,7 @@ namespace ElectronicLibrary.API.Controllers
         [HttpGet]
         public IActionResult GetAllReaders([FromQuery] PaginationParameters paginationParameters)
         {
-            var readers = this._electronicLibraryService.GetAllReaders()
-                                           .Skip(paginationParameters.Size * (paginationParameters.Page - 1))
-                                           .Take(paginationParameters.Size);
+            var readers = this._electronicLibraryService.GetAllReaders(paginationParameters.Page, paginationParameters.Size);
 
             return Ok(readers);
         }
@@ -47,7 +46,7 @@ namespace ElectronicLibrary.API.Controllers
 
             this._electronicLibraryService.InsertReader(reader);
 
-            return CreatedAtAction("GetReader", new {id = reader.Id}, reader);
+            return CreatedAtAction("GetReader", new { id = reader.Id }, reader);
         }
 
         [HttpDelete("{id:int}")]
@@ -70,17 +69,53 @@ namespace ElectronicLibrary.API.Controllers
             {
                 this._electronicLibraryService.UpdateReader(reader);
             }
-            catch (Exception)
+            catch (ElementNotFoundException)
             {
-                if (this._electronicLibraryService.GetReader(id) is null)
-                {
-                    return NotFound();
-                }
-
-                throw;
+                return NotFound();
             }
 
             return NoContent();
+        }
+
+        [HttpPost("{number:alpha}")]
+        public IActionResult ReturnBook([FromBody] int readerId, [FromRoute] string number)
+        {
+            var reader = this._electronicLibraryService.GetReader(readerId);
+            if (reader is null)
+            {
+                return NotFound(readerId);
+            }
+
+            this._electronicLibraryService.ReturnBook(reader, this._electronicLibraryService.GetInventoryNumber(number));
+
+            return Ok(number);
+        }
+
+        [HttpPost("{id:int}")]
+        public IActionResult TakeBook([FromBody] int bookId, [FromRoute] int id)
+        {
+            // TODO: add isBorrowed property to inventory_numbers
+
+            if (bookId <= 0 || id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var book = this._electronicLibraryService.GetBook(bookId);
+            if (book is null)
+            {
+                return NotFound(bookId);
+            }
+
+            var reader = this._electronicLibraryService.GetReader(id);
+            if (reader is null)
+            {
+                return NotFound(id);
+            }
+
+            var inventoryNumber = this._electronicLibraryService.TakeBook(book, reader);
+
+            return Ok(inventoryNumber);
         }
     }
 }

@@ -11,7 +11,19 @@ namespace ElectronicLibrary.API.Parameters
 
         private int _size = 15;
 
-        public int Page { get; set; }
+        private int _page = 1;
+
+        public int Page
+        {
+            get => this._page;
+            set
+            {
+                if (value > 0)
+                {
+                    this._page = value;
+                }
+            }
+        }
 
         public int Size
         {

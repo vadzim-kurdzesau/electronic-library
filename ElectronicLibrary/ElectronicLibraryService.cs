@@ -35,6 +35,9 @@ namespace ElectronicLibrary
         public IEnumerable<Reader> GetAllReaders()
             => this._readersRepository.GetAll();
 
+        public IEnumerable<Reader> GetAllReaders(int page, int size)
+            => this._readersRepository.GetAll(page, size);
+
         public Reader GetReader(int id)
             => this._readersRepository.Get(id);
 
@@ -73,6 +76,9 @@ namespace ElectronicLibrary
         public IEnumerable<Book> GetAllBooks()
             => this._booksRepository.GetAll();
 
+        public IEnumerable<Book> GetAllBooks(int page, int size)
+            => this._booksRepository.GetAll(page, size);
+
         public Book GetBook(int id)
             => this._booksRepository.Get(id);
 
@@ -86,14 +92,7 @@ namespace ElectronicLibrary
             => this._booksRepository.GetByAuthor(author);
 
         public bool DeleteBook(int id)
-        {
-            if (this.GetBook(id) is null)
-            {
-                throw new ElementNotFoundException("book", id);
-            }
-
-            return this._booksRepository.Delete(id);
-        }
+            => this._booksRepository.Delete(id);
 
         public void UpdateBook(Book book)
         {
@@ -104,6 +103,9 @@ namespace ElectronicLibrary
 
             this._booksRepository.Update(book);
         }
+
+        public InventoryNumber GetInventoryNumber(string number)
+            => this._inventoryNumbersRepository.Get(number);
 
         public IEnumerable<InventoryNumber> GetInventoryNumbers(Book book)
             => this._inventoryNumbersRepository.Get(book.Id);

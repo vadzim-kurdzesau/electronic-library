@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -17,6 +18,17 @@ namespace ElectronicLibrary.Repositories
         {
             using var connection = this.GetSqlConnection();
             return connection.GetAll<Book>();
+        }
+
+        public IEnumerable<Book> GetAll(int page, int size)
+        {
+            if (page <= 0 || size < 0)
+            {
+                throw new ArgumentException("Invalid size or page argument.");
+            }
+
+            const string queryString = "dbo.sp_books_read_all_paged";
+            return this.InitializeAndQueryStoredProcedure(queryString, new {Page = page, Size = size});
         }
 
         public Book Get(int id)

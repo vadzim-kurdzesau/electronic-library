@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using ElectronicLibrary.API.Fakers;
 using ElectronicLibrary.API.Parameters;
+using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.API.Controllers
@@ -17,11 +17,10 @@ namespace ElectronicLibrary.API.Controllers
         }
 
         [HttpGet]
+        // TODO: manage to get all books by author/name with pagination parameters
         public IActionResult GetAllBooks([FromQuery] PaginationParameters paginationParameters)
         {
-            var books = this._electronicLibraryService.GetAllBooks()
-                                                                      .Skip(paginationParameters.Size * (paginationParameters.Page - 1))
-                                                                      .Take(paginationParameters.Size);
+            var books = this._electronicLibraryService.GetAllBooks(paginationParameters.Page, paginationParameters.Size);
 
             return Ok(books);
         }
@@ -38,6 +37,32 @@ namespace ElectronicLibrary.API.Controllers
 
             return Ok(book);
         }
+
+        //[HttpGet]
+        //public IActionResult GetBooksByAuthor([FromQuery] string author)
+        //{
+        //    var books = this._electronicLibraryService.GetBooksByAuthor(author);
+
+        //    if (!books.Any())
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(books);
+        //}
+
+        //[HttpGet]
+        //public IActionResult GetBooksByName([FromQuery] string name)
+        //{
+        //    var books = this._electronicLibraryService.GetBooksByName(name);
+
+        //    if (!books.Any())
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(books);
+        //}
 
         [HttpPost]
         public IActionResult InsertBook(Book book)
@@ -75,14 +100,9 @@ namespace ElectronicLibrary.API.Controllers
             {
                 this._electronicLibraryService.UpdateBook(book);
             }
-            catch (Exception)
+            catch (ElementNotFoundException)
             {
-                if (this._electronicLibraryService.GetBook(id) is null)
-                {
-                    return NotFound();
-                }
-
-                throw;
+                return NotFound();
             }
 
             return NoContent();

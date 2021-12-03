@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Dapper;
 using ElectronicLibrary.Models;
 
@@ -13,6 +15,18 @@ namespace ElectronicLibrary.Repositories
 
         public IEnumerable<InventoryNumber> Get(Book book)
             => this.Get(book.Id);
+
+        public InventoryNumber Get(string number)
+        {
+            if (string.IsNullOrWhiteSpace(number))
+            {
+                throw new ArgumentNullException(nameof(number),
+                    "Inventory number can't be null, empty or a whitespace.");
+            }
+
+            const string queryString = "dbo.sp_inventory_numbers_read_by_name";
+            return this.InitializeAndQueryStoredProcedure(queryString, new {Number = number}).FirstOrDefault();
+        }
 
         public IEnumerable<InventoryNumber> Get(int bookId)
         {

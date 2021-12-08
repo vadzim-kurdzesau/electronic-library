@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ElectronicLibrary.EntityMaps;
+using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
 using ElectronicLibrary.Repositories;
 
@@ -34,6 +35,9 @@ namespace ElectronicLibrary
         public IEnumerable<Reader> GetAllReaders()
             => this._readersRepository.GetAll();
 
+        public IEnumerable<Reader> GetAllReaders(int page, int size)
+            => this._readersRepository.GetAll(page, size);
+
         public Reader GetReader(int id)
             => this._readersRepository.Get(id);
 
@@ -50,13 +54,30 @@ namespace ElectronicLibrary
             => this._readersRepository.Insert(reader);
 
         public void UpdateReader(Reader reader)
-            => this._readersRepository.Update(reader);
+        {
+            if (this.GetReader(reader.Id) is null)
+            {
+                throw new ElementNotFoundException(nameof(reader), reader.Id);
+            }
+
+            this._readersRepository.Update(reader);
+        }
 
         public void DeleteReader(int id)
-            => this._readersRepository.Delete(id);
+        {
+            if (this.GetReader(id) is null)
+            {
+                throw new ElementNotFoundException("reader", id);
+            }
+
+            this._readersRepository.Delete(id);
+        }
 
         public IEnumerable<Book> GetAllBooks()
             => this._booksRepository.GetAll();
+
+        public IEnumerable<Book> GetAllBooks(int page, int size)
+            => this._booksRepository.GetAll(page, size);
 
         public Book GetBook(int id)
             => this._booksRepository.Get(id);
@@ -64,23 +85,43 @@ namespace ElectronicLibrary
         public void InsertBook(Book book)
             => this._booksRepository.Insert(book);
 
-        public IEnumerable<Book> GetBookByName(string name)
-            => this._booksRepository.GetByName(name);
+        public IEnumerable<Book> GetBooksByName(string name, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, "name", name);
 
-        public IEnumerable<Book> GetBookByAuthor(string author)
-            => this._booksRepository.GetByAuthor(author);
+        public IEnumerable<Book> GetBooksByAuthor(string author, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, "author", author);
 
-        public void DeleteBook(int id)
+        public IEnumerable<Book> GetAllBooksByAuthorAndName(string author, string name, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, ("author", author), ("name", name));
+
+        public bool DeleteBook(int id)
             => this._booksRepository.Delete(id);
 
         public void UpdateBook(Book book)
-            => this._booksRepository.Update(book);
+        {
+            if (this.GetBook(book.Id) is null)
+            {
+                throw new ElementNotFoundException(nameof(book), book.Id);
+            }
+
+            this._booksRepository.Update(book);
+        }
+
+        public InventoryNumber GetInventoryNumber(string number)
+            => this._inventoryNumbersRepository.Get(number);
 
         public IEnumerable<InventoryNumber> GetInventoryNumbers(Book book)
             => this._inventoryNumbersRepository.Get(book.Id);
 
         public IEnumerable<InventoryNumber> GetInventoryNumbers(int bookId)
-            => this._inventoryNumbersRepository.Get(bookId);
+        {
+            if (this.GetBook(bookId) is null)
+            {
+                throw new ElementNotFoundException("book", bookId);
+            }
+
+            return this._inventoryNumbersRepository.Get(bookId);
+        } 
 
         public void InsertInventoryNumber(InventoryNumber inventoryNumber)
             => this._inventoryNumbersRepository.Insert(inventoryNumber);

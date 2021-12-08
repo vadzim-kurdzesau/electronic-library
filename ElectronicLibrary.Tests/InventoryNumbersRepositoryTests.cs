@@ -12,8 +12,8 @@ namespace ElectronicLibrary.Tests
     {
         protected override void ClearTable()
         {
-            this.ClearTable("inventory_numbers");
-            this.ClearTable("books");
+            ClearTable("inventory_numbers");
+            ClearTable("books");
         }
 
         public override void SetUp()

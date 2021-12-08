@@ -66,7 +66,7 @@ namespace ElectronicLibrary.Repositories
 
         public IEnumerable<Book> GetBooksBy(int page, int size, string name, string value)
         {
-            var queryString = $"SELECT * FROM dbo.books WHERE { name } = @{ name } ORDER BY (SELECT NULL) OFFSET((@Page - 1) * @Size) ROWS FETCH NEXT @Size ROWS ONLY";
+            var queryString = $"SELECT * FROM dbo.books WHERE { name } LIKE '%' + @{ name } + '%' ORDER BY (SELECT NULL) OFFSET((@Page - 1) * @Size) ROWS FETCH NEXT @Size ROWS ONLY";
             var dynamicParameters = new DynamicParameters()
                                         .AddParameter(name, value)
                                         .AddPaginationParameters(page, size);
@@ -84,16 +84,17 @@ namespace ElectronicLibrary.Repositories
         {
             ValidateParams(parameters);
 
+            // TODO: refactor method
             var dynamicParameters = new DynamicParameters();
             var queryString = new StringBuilder("SELECT * FROM dbo.books WHERE");
 
             for (int i = 0; i < parameters.Length - 1; i++)
             {
-                queryString.Append($" {parameters[i].name} = @{parameters[i].name} AND");
+                queryString.Append($" {parameters[i].name} LIKE '%' + @{parameters[i].name}  + '%' AND");
                 dynamicParameters.Add(parameters[i].name, parameters[i].value);
             }
 
-            queryString.Append($" {parameters[^1].name} = @{parameters[^1].name}").AppendPagination();
+            queryString.Append($" {parameters[^1].name} LIKE '%' + @{parameters[^1].name}  + '%'").AppendPagination();
 
             dynamicParameters.AddParameter(parameters[^1].name, parameters[^1].value)
                              .AddPaginationParameters(page, size);

@@ -18,9 +18,25 @@ namespace ElectronicLibrary.API.Controllers
 
         [HttpGet]
         // TODO: manage to get all books by author/name with pagination parameters
-        public IActionResult GetAllBooks([FromQuery] PaginationParameters paginationParameters)
+        public IActionResult GetAllBooks([FromQuery] BookParameters bookParameters)
         {
-            var books = this._electronicLibraryService.GetAllBooks(paginationParameters.Page, paginationParameters.Size);
+            IEnumerable<Book> books;
+            if (bookParameters.Author != null)
+            {
+                if (bookParameters.Name != null)
+                {
+                    books = this._electronicLibraryService.GetAllBooksByAuthorAndName(bookParameters.Author,
+                        bookParameters.Name, bookParameters.Page, bookParameters.Size);
+                }
+                else
+                {
+                    books = this._electronicLibraryService.GetBooksByAuthor(bookParameters.Author, bookParameters.Page, bookParameters.Size);
+                }
+            }
+            else
+            {
+                books = this._electronicLibraryService.GetAllBooks(bookParameters.Page, bookParameters.Size);
+            }
 
             return Ok(books);
         }
@@ -37,32 +53,6 @@ namespace ElectronicLibrary.API.Controllers
 
             return Ok(book);
         }
-
-        //[HttpGet]
-        //public IActionResult GetBooksByAuthor([FromQuery] string author)
-        //{
-        //    var books = this._electronicLibraryService.GetBooksByAuthor(author);
-
-        //    if (!books.Any())
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(books);
-        //}
-
-        //[HttpGet]
-        //public IActionResult GetBooksByName([FromQuery] string name)
-        //{
-        //    var books = this._electronicLibraryService.GetBooksByName(name);
-
-        //    if (!books.Any())
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(books);
-        //}
 
         [HttpPost]
         public IActionResult InsertBook(Book book)

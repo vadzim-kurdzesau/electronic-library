@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using Dapper;
 using Dapper.Contrib.Extensions;
+using ElectronicLibrary.Extensions;
 using ElectronicLibrary.Models;
 
 namespace ElectronicLibrary.Repositories
@@ -43,30 +45,10 @@ namespace ElectronicLibrary.Repositories
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParameters(book));
         }
 
-        public IEnumerable<Book> GetByName(string name)
-        {
-            const string queryString = "dbo.sp_books_read_by_name";
-
-            foreach (var book in this.InitializeAndQueryStoredProcedure(queryString, new { Name = name }))
-            {
-                yield return book;
-            }
-        }
-
         private IEnumerable<Book> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)
         {
             using var connection = this.GetSqlConnection();
             return connection.Query<Book>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
-        }
-
-        public IEnumerable<Book> GetByAuthor(string author)
-        {
-            const string queryString = "dbo.sp_books_read_by_author";
-
-            foreach (var book in this.InitializeAndQueryStoredProcedure(queryString, new { Author = author }))
-            {
-                yield return book;
-            }
         }
 
         public bool Delete(int id)
@@ -82,6 +64,51 @@ namespace ElectronicLibrary.Repositories
             this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParametersWithId(book));
         }
 
+        public IEnumerable<Book> GetBooksBy(int page, int size, string name, string value)
+        {
+            var queryString = $"SELECT * FROM dbo.books WHERE { name } = @{ name } ORDER BY (SELECT NULL) OFFSET((@Page - 1) * @Size) ROWS FETCH NEXT @Size ROWS ONLY";
+            var dynamicParameters = new DynamicParameters()
+                                        .AddParameter(name, value)
+                                        .AddPaginationParameters(page, size);
+
+            return this.ExecuteQuery(queryString, dynamicParameters);
+        }
+
+        private IEnumerable<Book> ExecuteQuery(string queryString, DynamicParameters parameters)
+        {
+            var connection = this.GetSqlConnection();
+            return connection.Query<Book>(queryString, parameters);
+        }
+
+        public IEnumerable<Book> GetBooksBy(int page, int size, params (string name, string value)[] parameters)
+        {
+            ValidateParams(parameters);
+
+            var dynamicParameters = new DynamicParameters();
+            var queryString = new StringBuilder("SELECT * FROM dbo.books WHERE");
+
+            for (int i = 0; i < parameters.Length - 1; i++)
+            {
+                queryString.Append($" {parameters[i].name} = @{parameters[i].name} AND");
+                dynamicParameters.Add(parameters[i].name, parameters[i].value);
+            }
+
+            queryString.Append($" {parameters[^1].name} = @{parameters[^1].name}").AppendPagination();
+
+            dynamicParameters.AddParameter(parameters[^1].name, parameters[^1].value)
+                             .AddPaginationParameters(page, size);
+
+            return this.ExecuteQuery(queryString.ToString(), dynamicParameters);
+        }
+
+        private static void ValidateParams(params (string name, string value)[] parameters)
+        {
+            if (parameters.Length == 0)
+            {
+                throw new ArgumentException("Number of parameters can't equal zero.");
+            }
+        }
+
         private static DynamicParameters ProvideBookParameters(Book book)
             => new DynamicParameters(new
             {
@@ -89,7 +116,6 @@ namespace ElectronicLibrary.Repositories
                 Author = book.Author,
                 PublicationDate = book.PublicationDate
             });
-
 
         private static DynamicParameters ProvideBookParametersWithId(Book book)
         {

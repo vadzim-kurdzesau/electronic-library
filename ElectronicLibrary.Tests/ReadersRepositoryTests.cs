@@ -123,17 +123,20 @@ namespace ElectronicLibrary.Tests
             Assert.IsTrue(new ReaderComparator().Equals(expected, this.Library.GetReader(expected.Id)));
         }
 
-        [TestCaseSource(typeof(Readers), nameof(Readers.GetList))]
-        public void ReadersRepositoryTests_DeleteReaders(Reader reader)
+        [Test]
+        public void ReadersRepositoryTests_DeleteReaders()
         {
-            // Arrange
-            this.Library.InsertReader(reader);
+            foreach (var reader in Readers.GetList().ExtractData<Reader>())
+            {
+                // Arrange
+                this.Library.InsertReader(reader);
 
-            // Act
-            this.Library.DeleteReader(reader.Id);
+                // Act
+                this.Library.DeleteReader(reader.Id);
 
-            // Assert
-            Assert.IsNull(GetElementFromTable<Reader>(reader.Id));
+                // Assert
+                Assert.IsNull(GetElementFromTable<Reader>(reader.Id));
+            }
         }
 
         protected override void ClearTable()

@@ -85,11 +85,14 @@ namespace ElectronicLibrary
         public void InsertBook(Book book)
             => this._booksRepository.Insert(book);
 
-        public IEnumerable<Book> GetBooksByName(string name)
-            => this._booksRepository.GetByName(name);
+        public IEnumerable<Book> GetBooksByName(string name, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, "name", name);
 
-        public IEnumerable<Book> GetBooksByAuthor(string author)
-            => this._booksRepository.GetByAuthor(author);
+        public IEnumerable<Book> GetBooksByAuthor(string author, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, "author", author);
+
+        public IEnumerable<Book> GetAllBooksByAuthorAndName(string author, string name, int page = 1, int size = 1)
+            => this._booksRepository.GetBooksBy(page, size, ("author", author), ("name", name));
 
         public bool DeleteBook(int id)
             => this._booksRepository.Delete(id);

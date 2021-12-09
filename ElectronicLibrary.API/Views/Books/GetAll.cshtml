@@ -1,0 +1,19 @@
+﻿@model IEnumerable<BookViewModel>
+
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Author</th>
+        <th>PublicationDate</th>
+    </tr>
+    @foreach (var bookModel in Model)
+    {
+        <tr>
+            <td>@bookModel.Id</td>
+            <td>@bookModel.Name</td>
+            <td>@bookModel.Author</td>
+            <td>@bookModel.PublicationDate</td>
+        </tr>
+    }
+</table>

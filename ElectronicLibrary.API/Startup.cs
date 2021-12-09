@@ -27,7 +27,7 @@ namespace ElectronicLibrary.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ElectronicLibraryService>(new ElectronicLibraryService(Configuration["ConnectionStrings:DefaultConnection"]));
-            services.AddControllers();
+            services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ElectronicLibrary.API", Version = "v1" });

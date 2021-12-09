@@ -17,7 +17,6 @@ namespace ElectronicLibrary.API.Controllers
         }
 
         [HttpGet]
-        // TODO: manage to get all books by author/name with pagination parameters
         public IActionResult GetAllBooks([FromQuery] BookParameters bookParameters)
         {
             IEnumerable<Book> books;

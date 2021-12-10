@@ -2,7 +2,6 @@
 
 namespace ElectronicLibrary.API.Controllers
 {
-    [ApiController]
     [Route("[controller]")]
     public abstract class BaseController : Controller
     {

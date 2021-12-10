@@ -13,4 +13,8 @@
     <ProjectReference Include="..\ElectronicLibrary\ElectronicLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Shared\" />
+  </ItemGroup>
+
 </Project>

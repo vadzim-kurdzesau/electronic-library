@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using ElectronicLibrary.API.Extensions;
 using ElectronicLibrary.API.Parameters;
+using ElectronicLibrary.API.ViewModels;
 using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
 
@@ -37,7 +39,7 @@ namespace ElectronicLibrary.API.Controllers
                 books = this._electronicLibraryService.GetAllBooks(bookParameters.Page, bookParameters.Size);
             }
 
-            return Ok(books);
+            return View("GetAll", books.ConvertToViewModel());
         }
 
         [HttpGet("{id:int}")]
@@ -50,20 +52,24 @@ namespace ElectronicLibrary.API.Controllers
                 return NotFound();
             }
 
-            return Ok(book);
+            return View("Get", book.ConvertToViewModel());
+        }
+
+        [HttpGet("insert")]
+        public IActionResult PostView()
+        {
+            return View("Insert");
         }
 
         [HttpPost]
-        public IActionResult InsertBook(Book book)
+        public IActionResult InsertBook(BookViewModel bookViewModel)
         {
-            if (book is null)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                this._electronicLibraryService.InsertBook(bookViewModel.ConvertToModel());
             }
 
-            this._electronicLibraryService.InsertBook(book);
-
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtAction("GetBook", new { id = bookViewModel.Id }, bookViewModel);
         }
 
         [HttpDelete("{id:int}")]
@@ -77,24 +83,30 @@ namespace ElectronicLibrary.API.Controllers
             return NotFound();
         }
 
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateBook(int id, Book book)
+        [HttpGet("update")]
+        public IActionResult Update()
         {
-            if (id != book.Id)
-            {
-                return BadRequest();
-            }
+            return View("Update");
+        }
+
+        [HttpPut]
+        public IActionResult UpdateBook(BookViewModel bookViewModel)
+        {
+            //if (id != bookViewModel.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             try
             {
-                this._electronicLibraryService.UpdateBook(book);
+                this._electronicLibraryService.UpdateBook(bookViewModel.ConvertToModel());
             }
             catch (ElementNotFoundException)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return View("Get", bookViewModel);
         }
     }
 }

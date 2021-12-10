@@ -56,7 +56,7 @@ namespace ElectronicLibrary.API.Controllers
         }
 
         [HttpGet("insert")]
-        public IActionResult Index()
+        public IActionResult PostView()
         {
             return View("Insert");
         }
@@ -83,24 +83,30 @@ namespace ElectronicLibrary.API.Controllers
             return NotFound();
         }
 
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateBook(int id, Book book)
+        [HttpGet("update")]
+        public IActionResult Update()
         {
-            if (id != book.Id)
-            {
-                return BadRequest();
-            }
+            return View("Update");
+        }
+
+        [HttpPut]
+        public IActionResult UpdateBook(BookViewModel bookViewModel)
+        {
+            //if (id != bookViewModel.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             try
             {
-                this._electronicLibraryService.UpdateBook(book);
+                this._electronicLibraryService.UpdateBook(bookViewModel.ConvertToModel());
             }
             catch (ElementNotFoundException)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return View("Get", bookViewModel);
         }
     }
 }

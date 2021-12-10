@@ -1,0 +1,24 @@
+﻿@model BookViewModel
+
+@Html.BeginForm("UpdateBook", "Books")
+{
+<p>
+    <label>Id</label><br />
+    @Html.TextBoxFor(m => m.Id);
+</p>
+<p>
+    <label>Name</label><br />
+    @Html.TextBoxFor(m => m.Name);
+</p>
+<p>
+    <label>Author</label><br />
+    @Html.TextBoxFor(m => m.Author);
+</p>
+<p>
+    <label>Publication Date</label><br />
+    @Html.TextBoxFor(m => m.PublicationDate);
+</p>
+<p>
+    <input type="submit" value="Submit" />
+</p>
+}

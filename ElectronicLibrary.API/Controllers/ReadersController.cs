@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using ElectronicLibrary.API.Extensions;
 using ElectronicLibrary.API.Parameters;
+using ElectronicLibrary.API.ViewModels;
 using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace ElectronicLibrary.API.Controllers
         {
             var readers = this._electronicLibraryService.GetAllReaders(paginationParameters.Page, paginationParameters.Size);
 
-            return Ok(readers);
+            return View("GetAll", this.ConvertToViewModel(readers));
         }
 
         [HttpGet("{id:int}")]
@@ -36,17 +36,25 @@ namespace ElectronicLibrary.API.Controllers
             return Ok(reader);
         }
 
-        [HttpPost]
-        public IActionResult InsertReader(Reader reader)
+        [HttpGet("insert")]
+        public IActionResult PostView()
         {
-            if (reader is null)
+            ViewBag.Cities = this._electronicLibraryService.GetAllCities.ConvertToSelectListItems();
+            return View("Insert");
+        }
+
+        [HttpPost]
+        public IActionResult InsertReader(ReaderViewModel readerViewModel)
+        {
+            if (readerViewModel is null)
             {
                 return BadRequest();
             }
 
-            this._electronicLibraryService.InsertReader(reader);
+            this._electronicLibraryService.InsertReader(this.ConvertToModel(readerViewModel));
 
-            return CreatedAtAction("GetReader", new { id = reader.Id }, reader);
+            return Ok();
+            //return CreatedAtAction("GetReader", new { id = reader.Id }, reader);
         }
 
         [HttpDelete("{id:int}")]
@@ -117,5 +125,34 @@ namespace ElectronicLibrary.API.Controllers
 
             return Ok(inventoryNumber);
         }
+
+        private IEnumerable<ReaderViewModel> ConvertToViewModel(IEnumerable<Reader> readers)
+            => readers.Select(this.ConvertToViewModel);
+
+        private Reader ConvertToModel(ReaderViewModel reader)
+            => new Reader()
+            {
+                Id = reader.Id,
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                Email = reader.Email,
+                Phone = reader.Phone,
+                CityId = this._electronicLibraryService.GetAllCities.First(c => c.Name == reader.City).Id,
+                Address = reader.Address,
+                Zip = reader.Zip
+            };
+
+        private ReaderViewModel ConvertToViewModel(Reader reader)
+            => new ReaderViewModel()
+            {
+                Id = reader.Id,
+                FirstName = reader.FirstName,
+                LastName = reader.LastName,
+                Email = reader.Email,
+                Phone = reader.Phone,
+                City = this._electronicLibraryService.GetAllCities.First(c => c.Id == reader.CityId).Name,
+                Address = reader.Address,
+                Zip = reader.Zip
+            };
     }
 }

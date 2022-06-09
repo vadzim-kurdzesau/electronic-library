@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using ElectronicLibrary.API.Extensions;
 using ElectronicLibrary.API.Parameters;
 using ElectronicLibrary.API.ViewModels;
@@ -92,11 +88,6 @@ namespace ElectronicLibrary.API.Controllers
         [HttpPut]
         public IActionResult UpdateBook(BookViewModel bookViewModel)
         {
-            //if (id != bookViewModel.Id)
-            //{
-            //    return BadRequest();
-            //}
-
             try
             {
                 this._electronicLibraryService.UpdateBook(bookViewModel.ConvertToModel());

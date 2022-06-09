@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ReaderViewModel>
+
+<table>
+    <tr>
+        <th>Id</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>City</th>
+        <th>Address</th>
+        <th>Zip</th>
+    </tr>
+    @foreach (var bookModel in Model)
+    {
+        <tr>
+            <td>@bookModel.Id</td>
+            <td>@bookModel.FirstName</td>
+            <td>@bookModel.LastName</td>
+            <td>@bookModel.Email</td>
+            <td>@bookModel.Phone</td>
+            <td>@bookModel.City</td>
+            <td>@bookModel.Address</td>
+            <td>@bookModel.Zip</td>
+        </tr>
+    }
+</table>

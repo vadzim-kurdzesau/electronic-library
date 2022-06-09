@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ElectronicLibrary\ElectronicLibrary.csproj" />
+    <ProjectReference Include="..\..\src\ElectronicLibrary\ElectronicLibrary.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

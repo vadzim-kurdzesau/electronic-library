@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ElectronicLibrary.API.Controllers
 {
@@ -10,6 +6,7 @@ namespace ElectronicLibrary.API.Controllers
     {
         public CitiesController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)
         {
+            ViewBag.Cities = _electronicLibraryService.GetAllCities;
         }
 
         [HttpGet]

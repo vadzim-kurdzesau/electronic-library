@@ -1,0 +1,36 @@
+﻿@model ReaderViewModel
+
+@using(Html.BeginForm("InsertReader", "Readers", FormMethod.Post))
+{
+<p>
+    <label>First Name</label><br />
+    @Html.TextBoxFor(m => m.FirstName)
+</p>
+<p>
+    <label>Last Name</label><br />
+    @Html.TextBoxFor(m => m.LastName)
+</p>
+<p>
+    <label>Email</label><br />
+    @Html.TextBoxFor(m => m.Email)
+</p>
+<p>
+    <label>Phone</label><br />
+    @Html.TextBoxFor(m => m.Phone)
+</p>
+<p>
+    <label>City</label><br />
+    @Html.DropDownListFor(m => m.City, (IEnumerable<SelectListItem>) ViewBag.Cities)
+</p>
+<p>
+    <label>Address</label><br />
+    @Html.TextBoxFor(m => m.Address)
+</p>
+<p>
+    <label>Zip</label><br />
+    @Html.TextBoxFor(m => m.Zip)
+</p>
+<p>
+    <input type="submit" value="Submit" />
+</p>
+}

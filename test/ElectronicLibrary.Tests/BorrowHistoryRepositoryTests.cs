@@ -33,13 +33,13 @@ namespace ElectronicLibrary.Tests
         public void BorrowHistoryRepositoryTests_TakeBook()
         {
             // Arrange
-            this.Arrange();
-            var books = this.Library.GetAllBooks().ToArray();
-            var readers = this.Library.GetAllReaders().ToArray();
+            Arrange();
+            var books = Library.GetAllBooks().ToArray();
+            var readers = Library.GetAllReaders().ToArray();
 
             for (int i = 0; i < books.Length; i++)
             {
-                var expected = this.Library.GetInventoryNumbers(books[i]).First();
+                var expected = Library.GetInventoryNumbers(books[i]).First();
 
                 // Act
                 var actual = Library.TakeBook(books[i], readers[i]);
@@ -85,19 +85,19 @@ namespace ElectronicLibrary.Tests
         public void BorrowHistoryRepositoryTests_ReturnBook()
         {
             // Arrange
-            this.Arrange();
-            var books = this.Library.GetAllBooks().ToArray();
-            var readers = this.Library.GetAllReaders().ToArray();
+            Arrange();
+            var books = Library.GetAllBooks().ToArray();
+            var readers = Library.GetAllReaders().ToArray();
 
             for (int i = 0; i < books.Length; i++)
             {
-                var expected = this.Library.GetInventoryNumbers(books[i]).First();
+                var expected = Library.GetInventoryNumbers(books[i]).First();
                 var actual = Library.TakeBook(books[i], readers[i]);
 
                 // Act
                 Library.ReturnBook(readers[i], expected);
 
-                var a = this.GetElementFromTable<BorrowHistoryRecord>(i + 1);
+                var a = GetElementFromTable<BorrowHistoryRecord>(i + 1);
 
                 // Assert
                 //Assert.NotNull(this.GetElementFromTable<BorrowHistoryRecord>(i + 1).ReturnDate);
@@ -110,8 +110,8 @@ namespace ElectronicLibrary.Tests
             int i = 1;
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this.Library.InsertBook(book);
-                this.Library.InsertInventoryNumber(new InventoryNumber()
+                Library.InsertBook(book);
+                Library.InsertInventoryNumber(new InventoryNumber()
                 {
                     Id = i,
                     BookId = book.Id,
@@ -123,7 +123,7 @@ namespace ElectronicLibrary.Tests
 
             foreach (var reader in Readers.GetList().ExtractData<Reader>())
             {
-                this.Library.InsertReader(reader);
+                Library.InsertReader(reader);
             }
         }
     }

@@ -4,15 +4,16 @@ namespace ElectronicLibrary.API.Controllers
 {
     public class CitiesController : BaseController
     {
-        public CitiesController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)
+        public CitiesController(ElectronicLibraryService electronicLibraryService)
+            : base(electronicLibraryService)
         {
-            ViewBag.Cities = _electronicLibraryService.GetAllCities;
+            ViewBag.Cities = _electronicLibraryService.GetAllCities();
         }
 
         [HttpGet]
         public IActionResult GetAllCities()
         {
-            var cities = this._electronicLibraryService.GetAllCities;
+            var cities = _electronicLibraryService.GetAllCities();
             return Ok(cities);
         }
     }

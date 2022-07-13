@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -18,50 +17,42 @@ namespace ElectronicLibrary.Repositories
 
         public IEnumerable<Book> GetAll()
         {
-            using var connection = this.GetSqlConnection();
+            using var connection = GetSqlConnection();
             return connection.GetAll<Book>();
         }
 
         public IEnumerable<Book> GetAll(int page, int size)
         {
-            if (page <= 0 || size < 0)
-            {
-                throw new ArgumentException("Invalid size or page argument.");
-            }
+            ValidatePaginationParameters(page, size);
 
-            const string queryString = "dbo.sp_books_read_all_paged";
-            return this.InitializeAndQueryStoredProcedure(queryString, new {Page = page, Size = size});
+            const string procedureName = "dbo.sp_books_read_all_paged";
+            return InitializeAndQueryStoredProcedure<Book>(procedureName, new {Page = page, Size = size});
         }
 
         public Book Get(int id)
         {
-            using var connection = this.GetSqlConnection();
+            ValidateId(id);
+
+            using var connection = GetSqlConnection();
             return connection.Get<Book>(id);
         }
 
         public void Insert(Book book)
         {
-            const string queryString = "dbo.sp_books_insert";
-            this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParameters(book));
-        }
-
-        private IEnumerable<Book> InitializeAndQueryStoredProcedure(string procedureName, object procedureParameters)
-        {
-            using var connection = this.GetSqlConnection();
-            return connection.Query<Book>(procedureName, procedureParameters, commandType: CommandType.StoredProcedure);
+            const string procedureName = "dbo.sp_books_insert";
+            InitializeAndExecuteStoredProcedure(procedureName, ProvideBookParameters(book));
         }
 
         public bool Delete(int id)
         {
-            using var connection = this.GetSqlConnection();
+            using var connection = GetSqlConnection();
             return connection.Delete(new Book() {Id = id});
         }
 
         public void Update(Book book)
         {
-            const string queryString = "dbo.sp_books_update";
-
-            this.InitializeAndExecuteStoredProcedure(queryString, ProvideBookParametersWithId(book));
+            const string procedureName = "dbo.sp_books_update";
+            InitializeAndExecuteStoredProcedure(procedureName, ProvideBookParameters(book).AddIdParameter(book.Id));
         }
 
         public IEnumerable<Book> GetBooksBy(int page, int size, string name, string value)
@@ -71,20 +62,14 @@ namespace ElectronicLibrary.Repositories
                                         .AddParameter(name, value)
                                         .AddPaginationParameters(page, size);
 
-            return this.ExecuteQuery(queryString, dynamicParameters);
+            return ExecuteQuery<Book>(queryString, dynamicParameters);
         }
 
-        private IEnumerable<Book> ExecuteQuery(string queryString, DynamicParameters parameters)
-        {
-            var connection = this.GetSqlConnection();
-            return connection.Query<Book>(queryString, parameters);
-        }
-
+        // TODO: refactor method
         public IEnumerable<Book> GetBooksBy(int page, int size, params (string name, string value)[] parameters)
         {
-            ValidateParams(parameters);
+            ValidateParameters(parameters);
 
-            // TODO: refactor method
             var dynamicParameters = new DynamicParameters();
             var queryString = new StringBuilder("SELECT * FROM dbo.books WHERE");
 
@@ -99,10 +84,10 @@ namespace ElectronicLibrary.Repositories
             dynamicParameters.AddParameter(parameters[^1].name, parameters[^1].value)
                              .AddPaginationParameters(page, size);
 
-            return this.ExecuteQuery(queryString.ToString(), dynamicParameters);
+            return ExecuteQuery<Book>(queryString.ToString(), dynamicParameters);
         }
 
-        private static void ValidateParams(params (string name, string value)[] parameters)
+        private static void ValidateParameters(params (string name, string value)[] parameters)
         {
             if (parameters.Length == 0)
             {
@@ -117,12 +102,5 @@ namespace ElectronicLibrary.Repositories
                 Author = book.Author,
                 PublicationDate = book.PublicationDate
             });
-
-        private static DynamicParameters ProvideBookParametersWithId(Book book)
-        {
-            var parameters = ProvideBookParameters(book);
-            parameters.Add("Id", book.Id, DbType.Int32);
-            return parameters;
-        }
     }
 }

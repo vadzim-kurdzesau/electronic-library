@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ElectronicLibrary.API.Extensions;
 using ElectronicLibrary.API.Parameters;
 using ElectronicLibrary.API.ViewModels;
 using ElectronicLibrary.Exceptions;
 using ElectronicLibrary.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ElectronicLibrary.API.Controllers
 {
     public class BooksController : BaseController
     {
-        public BooksController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)
+        public BooksController(ElectronicLibraryService electronicLibraryService)
+            : base(electronicLibraryService)
         {
         }
 
@@ -22,17 +23,21 @@ namespace ElectronicLibrary.API.Controllers
             {
                 if (bookParameters.Name != null)
                 {
-                    books = this._electronicLibraryService.GetAllBooksByAuthorAndName(bookParameters.Author,
+                    books = _electronicLibraryService.GetAllBooksByAuthorAndName(bookParameters.Author,
                         bookParameters.Name, bookParameters.Page, bookParameters.Size);
                 }
                 else
                 {
-                    books = this._electronicLibraryService.GetBooksByAuthor(bookParameters.Author, bookParameters.Page, bookParameters.Size);
+                    books = _electronicLibraryService.GetBooksByAuthor(bookParameters.Author, bookParameters.Page, bookParameters.Size);
                 }
+            }
+            else if (bookParameters.Name != null)
+            {
+                books = _electronicLibraryService.GetBooksByName(bookParameters.Name, bookParameters.Page, bookParameters.Size);
             }
             else
             {
-                books = this._electronicLibraryService.GetAllBooks(bookParameters.Page, bookParameters.Size);
+                books = _electronicLibraryService.GetAllBooks(bookParameters.Page, bookParameters.Size);
             }
 
             return View("GetAll", books.ConvertToViewModel());
@@ -41,7 +46,7 @@ namespace ElectronicLibrary.API.Controllers
         [HttpGet("{id:int}")]
         public IActionResult GetBook(int id)
         {
-            var book = this._electronicLibraryService.GetBook(id);
+            var book = _electronicLibraryService.GetBook(id);
 
             if (book is null)
             {
@@ -62,7 +67,7 @@ namespace ElectronicLibrary.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                this._electronicLibraryService.InsertBook(bookViewModel.ConvertToModel());
+                _electronicLibraryService.InsertBook(bookViewModel.ConvertToModel());
             }
 
             return CreatedAtAction("GetBook", new { id = bookViewModel.Id }, bookViewModel);
@@ -71,7 +76,7 @@ namespace ElectronicLibrary.API.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteBook(int id)
         {
-            if (this._electronicLibraryService.DeleteBook(id))
+            if (_electronicLibraryService.DeleteBook(id))
             {
                 return Ok();
             }
@@ -90,7 +95,7 @@ namespace ElectronicLibrary.API.Controllers
         {
             try
             {
-                this._electronicLibraryService.UpdateBook(bookViewModel.ConvertToModel());
+                _electronicLibraryService.UpdateBook(bookViewModel.ConvertToModel());
             }
             catch (ElementNotFoundException)
             {

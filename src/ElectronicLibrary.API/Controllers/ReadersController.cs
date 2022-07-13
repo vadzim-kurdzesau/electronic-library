@@ -11,23 +11,22 @@ namespace ElectronicLibrary.API.Controllers
 {
     public class ReadersController : BaseController
     {
-        public ReadersController(ElectronicLibraryService electronicLibraryService) : base(electronicLibraryService)
+        public ReadersController(ElectronicLibraryService electronicLibraryService)
+            : base(electronicLibraryService)
         {
         }
 
         [HttpGet]
         public IActionResult GetAllReaders([FromQuery] PaginationParameters paginationParameters)
         {
-            var readers = this._electronicLibraryService.GetAllReaders(paginationParameters.Page, paginationParameters.Size);
-
-            return View("GetAll", this.ConvertToViewModel(readers));
+            var readers = _electronicLibraryService.GetAllReaders(paginationParameters.Page, paginationParameters.Size);
+            return View("GetAll", ConvertToViewModel(readers));
         }
 
         [HttpGet("{id:int}")]
         public IActionResult GetReader(int id)
         {
-            var reader = this._electronicLibraryService.GetReader(id);
-
+            var reader = _electronicLibraryService.GetReader(id);
             if (reader is null)
             {
                 return NotFound();
@@ -39,7 +38,7 @@ namespace ElectronicLibrary.API.Controllers
         [HttpGet("insert")]
         public IActionResult PostView()
         {
-            ViewBag.Cities = this._electronicLibraryService.GetAllCities.ConvertToSelectListItems();
+            ViewBag.Cities = _electronicLibraryService.GetAllCities().ConvertToSelectListItems();
             return View("Insert");
         }
 
@@ -51,8 +50,7 @@ namespace ElectronicLibrary.API.Controllers
                 return BadRequest();
             }
 
-            this._electronicLibraryService.InsertReader(this.ConvertToModel(readerViewModel));
-
+            _electronicLibraryService.InsertReader(ConvertToModel(readerViewModel));
             return Ok();
             //return CreatedAtAction("GetReader", new { id = reader.Id }, reader);
         }
@@ -60,8 +58,7 @@ namespace ElectronicLibrary.API.Controllers
         [HttpDelete("{id:int}")]
         public IActionResult DeleteReader(int id)
         {
-            this._electronicLibraryService.DeleteReader(id);
-
+            _electronicLibraryService.DeleteReader(id);
             return Ok();
         }
 
@@ -75,7 +72,7 @@ namespace ElectronicLibrary.API.Controllers
 
             try
             {
-                this._electronicLibraryService.UpdateReader(reader);
+                _electronicLibraryService.UpdateReader(reader);
             }
             catch (ElementNotFoundException)
             {
@@ -88,14 +85,13 @@ namespace ElectronicLibrary.API.Controllers
         [HttpPost("{number:alpha}")]
         public IActionResult ReturnBook([FromBody] int readerId, [FromRoute] string number)
         {
-            var reader = this._electronicLibraryService.GetReader(readerId);
+            var reader = _electronicLibraryService.GetReader(readerId);
             if (reader is null)
             {
                 return NotFound(readerId);
             }
 
-            this._electronicLibraryService.ReturnBook(reader, this._electronicLibraryService.GetInventoryNumber(number));
-
+            _electronicLibraryService.ReturnBook(reader, _electronicLibraryService.GetInventoryNumber(number));
             return Ok(number);
         }
 
@@ -109,25 +105,25 @@ namespace ElectronicLibrary.API.Controllers
                 return BadRequest();
             }
 
-            var book = this._electronicLibraryService.GetBook(bookId);
+            var book = _electronicLibraryService.GetBook(bookId);
             if (book is null)
             {
                 return NotFound(bookId);
             }
 
-            var reader = this._electronicLibraryService.GetReader(id);
+            var reader = _electronicLibraryService.GetReader(id);
             if (reader is null)
             {
                 return NotFound(id);
             }
 
-            var inventoryNumber = this._electronicLibraryService.TakeBook(book, reader);
+            var inventoryNumber = _electronicLibraryService.TakeBook(book, reader);
 
             return Ok(inventoryNumber);
         }
 
         private IEnumerable<ReaderViewModel> ConvertToViewModel(IEnumerable<Reader> readers)
-            => readers.Select(this.ConvertToViewModel);
+            => readers.Select(ConvertToViewModel);
 
         private Reader ConvertToModel(ReaderViewModel reader)
             => new Reader()
@@ -137,7 +133,7 @@ namespace ElectronicLibrary.API.Controllers
                 LastName = reader.LastName,
                 Email = reader.Email,
                 Phone = reader.Phone,
-                CityId = this._electronicLibraryService.GetAllCities.First(c => c.Name == reader.City).Id,
+                CityId = _electronicLibraryService.GetAllCities().First(c => c.Name == reader.City).Id,
                 Address = reader.Address,
                 Zip = reader.Zip
             };
@@ -150,7 +146,7 @@ namespace ElectronicLibrary.API.Controllers
                 LastName = reader.LastName,
                 Email = reader.Email,
                 Phone = reader.Phone,
-                City = this._electronicLibraryService.GetAllCities.First(c => c.Id == reader.CityId).Name,
+                City = _electronicLibraryService.GetAllCities().First(c => c.Id == reader.CityId).Name,
                 Address = reader.Address,
                 Zip = reader.Zip
             };

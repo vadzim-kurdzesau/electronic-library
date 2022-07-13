@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ElectronicLibrary.API.Parameters
 {
     public class PaginationParameters
     {
-        private const int _maxSize = 100;
+        private const int MaxSize = 100;
 
         private int _size = 15;
 
@@ -15,25 +12,25 @@ namespace ElectronicLibrary.API.Parameters
 
         public int Page
         {
-            get => this._page;
+            get => _page;
             set
             {
                 if (value > 0)
                 {
-                    this._page = value;
+                    _page = value;
                 }
             }
         }
 
         public int Size
         {
-            get => this._size;
+            get => _size;
 
             set
             {
                 if (value > 0)
                 {
-                    this._size = Math.Min(_maxSize, value);
+                    _size = Math.Min(MaxSize, value);
                 }
             }
         }

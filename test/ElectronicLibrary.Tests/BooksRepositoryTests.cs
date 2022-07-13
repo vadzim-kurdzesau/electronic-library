@@ -22,7 +22,7 @@ namespace ElectronicLibrary.Tests
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
                 // Arrange
-                this.Library.InsertBook(book);
+                Library.InsertBook(book);
 
                 // Act
                 var actual = GetElementFromTable<Book>(book.Id);
@@ -38,10 +38,10 @@ namespace ElectronicLibrary.Tests
             foreach (var expected in Books.GetList().ExtractData<Book>())
             {
                 // Arrange
-                this.Library.InsertBook(expected);
+                Library.InsertBook(expected);
 
                 // Act
-                var actual = this.Library.GetBooksByName(expected.Name).FirstOrDefault();
+                var actual = Library.GetBooksByName(expected.Name).FirstOrDefault();
 
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
@@ -54,10 +54,10 @@ namespace ElectronicLibrary.Tests
             foreach (var expected in Books.GetList().ExtractData<Book>())
             {
                 // Arrange
-                this.Library.InsertBook(expected);
+                Library.InsertBook(expected);
 
                 // Act
-                var actual = this.Library.GetBooksByAuthor(expected.Author).FirstOrDefault();
+                var actual = Library.GetBooksByAuthor(expected.Author).FirstOrDefault();
 
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
@@ -70,10 +70,10 @@ namespace ElectronicLibrary.Tests
             foreach (var expected in Books.GetList().ExtractData<Book>())
             {
                 // Arrange
-                this.Library.InsertBook(expected);
+                Library.InsertBook(expected);
 
                 // Act
-                var actual = this.Library.GetBook(expected.Id);
+                var actual = Library.GetBook(expected.Id);
 
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected, actual));
@@ -86,14 +86,14 @@ namespace ElectronicLibrary.Tests
             // Arrange
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this.Library.InsertBook(book);
+                Library.InsertBook(book);
             }
 
             int index = 0;
             var expected = Books.GetList().ExtractData<Book>().ToArray();
 
             // Act
-            foreach (var actual in this.Library.GetAllBooks())
+            foreach (var actual in Library.GetAllBooks())
             {
                 // Assert
                 Assert.IsTrue(new BookComparator().Equals(expected[index++], actual));
@@ -105,15 +105,15 @@ namespace ElectronicLibrary.Tests
         {
             // Arrange
             var expected = Books.GetList().ExtractData<Book>().First();
-            this.Library.InsertBook(expected);
+            Library.InsertBook(expected);
 
-            expected.Author = "Jane Austen";
+            expected.Author = "Test Author";
 
             // Act
-            this.Library.UpdateBook(expected);
+            Library.UpdateBook(expected);
 
             // Assert
-            Assert.IsTrue(new BookComparator().Equals(expected, this.Library.GetBooksByAuthor(expected.Author).FirstOrDefault()));
+            Assert.IsTrue(new BookComparator().Equals(expected, Library.GetBooksByAuthor(expected.Author).FirstOrDefault()));
         }
 
         [Test]
@@ -122,13 +122,13 @@ namespace ElectronicLibrary.Tests
             // Arrange
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this.Library.InsertBook(book);
+                Library.InsertBook(book);
             }
 
             // Act
             for (int i = 1; i <= Books.GetList().Count(); i++)
             {
-                this.Library.DeleteBook(i);
+                Library.DeleteBook(i);
 
                 // Assert
                 Assert.IsNull(GetElementFromTable<Book>(i));

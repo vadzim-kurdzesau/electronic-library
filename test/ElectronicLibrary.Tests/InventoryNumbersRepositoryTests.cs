@@ -29,7 +29,7 @@ namespace ElectronicLibrary.Tests
             int index = 1;
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this.Library.InsertBook(book);
+                Library.InsertBook(book);
 
                 var expected = new InventoryNumber()
                 {
@@ -38,13 +38,13 @@ namespace ElectronicLibrary.Tests
                     Number = index.ToString()
                 };
 
+                index++;
+
                 // Act
-                this.Library.InsertInventoryNumber(expected);
+                Library.InsertInventoryNumber(expected);
 
                 // Assert
                 Assert.IsTrue(new InventoryNumberComparator().Equals(expected, GetElementFromTable<InventoryNumber>(expected.Id)));
-
-                index++;
             }
         }
 
@@ -55,7 +55,7 @@ namespace ElectronicLibrary.Tests
             int id = 1;
             foreach (var book in Books.GetList().ExtractData<Book>())
             {
-                this.Library.InsertBook(book);
+                Library.InsertBook(book);
 
                 for (int i = 0; i < 10; id++, i++)
                 {
@@ -66,10 +66,10 @@ namespace ElectronicLibrary.Tests
                         Number = id.ToString()
                     };
 
-                    this.Library.InsertInventoryNumber(expected);
+                    Library.InsertInventoryNumber(expected);
 
                     // Act
-                    var actual = this.Library.GetInventoryNumbers(book);
+                    var actual = Library.GetInventoryNumbers(book);
 
                     // Assert
                     Assert.NotNull(actual.FirstOrDefault(inv => new InventoryNumberComparator().Equals(expected, inv)));

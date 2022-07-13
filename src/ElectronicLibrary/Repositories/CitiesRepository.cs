@@ -8,21 +8,22 @@ namespace ElectronicLibrary.Repositories
     {
         private readonly List<City> _cities;
 
-        internal CitiesRepository(string connectionString) : base(connectionString)
+        internal CitiesRepository(string connectionString)
+            : base(connectionString)
         {
-            this._cities = new List<City>();
+            _cities = new List<City>();
         }
 
         public IEnumerable<City> Cities
         {
             get
             {
-                if (this._cities.Count == 0)
+                if (_cities.Count == 0)
                 {
-                    this.FillCities();
+                    FillCities();
                 }
 
-                return this._cities;
+                return _cities;
             }
         }
 
@@ -31,7 +32,7 @@ namespace ElectronicLibrary.Repositories
             using var connection = GetSqlConnection();
             foreach (var city in connection.GetAll<City>())
             {
-                this._cities.Add(city);
+                _cities.Add(city);
             }
         }
     }

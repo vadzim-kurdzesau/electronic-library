@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicLibrary.API", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElectronicLibrary.Tests", "test\ElectronicLibrary.Tests\ElectronicLibrary.Tests.csproj", "{EE9964B0-F08E-4CDD-8D21-5C6BC9CFA508}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ElectronicLibrary.Data", "src\ElectronicLibrary.Data\ElectronicLibrary.Data.sqlproj", "{5A25E385-9767-4EA1-821D-569968175CFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,12 @@ Global
 		{EE9964B0-F08E-4CDD-8D21-5C6BC9CFA508}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE9964B0-F08E-4CDD-8D21-5C6BC9CFA508}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE9964B0-F08E-4CDD-8D21-5C6BC9CFA508}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A25E385-9767-4EA1-821D-569968175CFF}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

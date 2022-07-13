@@ -11,17 +11,17 @@ namespace ElectronicLibrary.Tests
 
         public CitiesRepositoryTests()
         {
-            this._library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
+            _library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
         [Test]
         public void CitiesRepositoryTests_FillCities()
         {
-            var expected = this.GetNumberOfEntriesInCitiesTable();
-            Assert.AreEqual(expected, _library.GetAllCities.Count());
+            var expected = GetNumberOfEntriesInCitiesTable();
+            Assert.AreEqual(expected, _library.GetAllCities().Count());
         }
 
-        private int GetNumberOfEntriesInCitiesTable()
+        private static int GetNumberOfEntriesInCitiesTable()
         {
             const string queryString = "SELECT COUNT(*) FROM dbo.cities;";
 

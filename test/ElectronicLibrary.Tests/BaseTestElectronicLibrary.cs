@@ -11,11 +11,19 @@ namespace ElectronicLibrary.Tests
     [TestFixture]
     public abstract class BaseTestElectronicLibrary
     {
+        private static readonly string[] TableNames = new string[]
+        {
+            "books",
+            "readers",
+            "inventory_numbers",
+            "borrow_history"
+        };
+
         protected readonly ElectronicLibraryService Library;
 
         protected BaseTestElectronicLibrary()
         {
-            this.Library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
+            Library = new ElectronicLibraryService(ConfigurationManager.ConnectionString);
         }
 
         [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
@@ -27,17 +35,14 @@ namespace ElectronicLibrary.Tests
         [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
         public static void ClassCleanup()
         {
-            ClearTable("books");
-            ReseedTableIdentifiers("books");
-            ClearTable("readers");
-            ReseedTableIdentifiers("readers");
-            ClearTable("inventory_numbers");
-            ReseedTableIdentifiers("inventory_numbers");
-            ClearTable("borrow_history");
-            ReseedTableIdentifiers("borrow_history");
+            foreach (var tableName in TableNames)
+            {
+                ClearTable(tableName);
+                ReseedTableIdentifiers(tableName);
+            }
         }
 
-        public static void ClearTable(string tableName)
+        protected static void ClearTable(string tableName)
         {
             string queryString = $"DELETE dbo.{tableName};";
 
@@ -49,7 +54,7 @@ namespace ElectronicLibrary.Tests
 
         internal static void ReseedTableIdentifiers(string tableName)
         {
-            using SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionString);
+            using var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionString);
             sqlConnection.Open();
 
             new SqlCommand($"DBCC CHECKIDENT ('ElectronicLibrary.dbo.{tableName}', RESEED, 0);", sqlConnection).ExecuteNonQuery();
@@ -58,13 +63,13 @@ namespace ElectronicLibrary.Tests
         [TearDown]
         public void TearDown()
         {
-            this.ClearTable();
+            ClearTable();
         }
 
         [SetUp]
         public abstract void SetUp();
 
-        protected T GetElementFromTable<T>(int id) where T : class
+        protected static T GetElementFromTable<T>(int id) where T : class
         {
             using var sqlConnection = new SqlConnection(ConfigurationManager.ConnectionString);
             return sqlConnection.Get<T>(id);

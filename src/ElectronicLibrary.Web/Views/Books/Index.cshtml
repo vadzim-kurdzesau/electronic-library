@@ -1,0 +1,41 @@
+﻿@model IEnumerable<BookViewModel>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-end">
+        <form method="get">
+            <button asp-controller="Books" asp-action="Create"
+                    class="btn btn-lg btn-primary">Add New</button>
+        </form>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        @foreach (var book in Model)
+        {
+            <div class="col">
+                <div class="card shadow-sm">
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                     xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                     preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#55595c"></rect>
+                        <text x="40%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+                    </svg>
+                    <div class="card-body">
+                        <p class="card-title">@book.Title</p>
+                        <p class="card-author">@book.Author</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <form method="get">
+                            <button asp-controller="Books" asp-action="Details" asp-route-id="@book.Id"
+                                class="btn btn-sm btn-outline-secondary">View</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

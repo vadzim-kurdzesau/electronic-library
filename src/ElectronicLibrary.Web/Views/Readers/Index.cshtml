@@ -1,0 +1,67 @@
+﻿@model IEnumerable<ReaderViewModel>
+
+@{
+    ViewData["Title"] = "Readers";
+}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-uppercase mb-0">Manage Readers</h5>
+                <form method="get">
+                    <button asp-controller="Readers" asp-action="Create" class="btn btn-lg btn-primary">Add New</button>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table no-wrap user-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="border-0 text-uppercase font-medium">Full Name</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium">Email</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium">Phone</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium">City</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium">Address</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium">Zip</th>
+                            <th scope="col" class="border-0 text-uppercase font-medium"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reader in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <h5 class="font-medium mb-0">@reader.FullName</h5>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@reader.Email</span><br>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@reader.Phone</span><br>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@reader.City</span><br>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@reader.Address</span><br>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@reader.Zip</span><br>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <form method="get">
+                                            <button asp-controller="Readers" asp-action="Details" asp-route-id="@reader.Id" class="btn btn-sm btn-outline-secondary">View</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

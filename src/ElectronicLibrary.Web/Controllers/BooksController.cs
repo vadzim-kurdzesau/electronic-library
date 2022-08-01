@@ -53,7 +53,6 @@ namespace ElectronicLibrary.Web.Controllers
             return View();
         }
 
-        // POST: BooksController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(BookViewModel book)

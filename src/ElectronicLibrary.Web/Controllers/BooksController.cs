@@ -87,11 +87,16 @@ namespace ElectronicLibrary.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, BookViewModel model)
+        public ActionResult Edit(int id, BookViewModel book)
         {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             try
             {
-                _electronicLibraryService.UpdateBook(model.ToModel());
+                _electronicLibraryService.UpdateBook(book.ToModel());
                 return RedirectToAction(nameof(Index));
             }
             catch (ElementNotFoundException)

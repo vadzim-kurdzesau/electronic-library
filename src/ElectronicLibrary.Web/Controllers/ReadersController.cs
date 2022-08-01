@@ -68,26 +68,39 @@ namespace ElectronicLibrary.Web.Controllers
             }
         }
 
-        //// GET: ReadersController/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
+        [HttpGet]        
+        public ActionResult Edit(int id)
+        {
+            var reader = _electronicLibraryService.GetReader(id);
+            if (reader is null)
+            {
+                return NotFound();
+            }
 
-        //// POST: ReadersController/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+            ViewBag.Cities = _cities;
+
+            return View(ReaderViewModel.ToViewModel(reader, _cities));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, ReaderViewModel reader)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            try
+            {
+                _electronicLibraryService.UpdateReader(reader.ToModel(_cities));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ElementNotFoundException)
+            {
+                return NotFound();
+            }
+        }
 
         [HttpGet]
         public ActionResult Delete(int id)
